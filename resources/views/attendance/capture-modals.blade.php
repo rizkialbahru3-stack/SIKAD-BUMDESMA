@@ -1,6 +1,6 @@
 @unless(auth()->user()->isAdmin())
 @php($captureOffice = \App\Models\AttendanceLocation::active())
-@foreach([['in', 'Masuk', 'masuk', route('attendance.check-in')], ['out', 'Pulang', 'pulang', route('attendance.check-out')]] as [$suffix, $label, $type, $url])
+@foreach([['in', 'Masuk', 'masuk', route('attendance.check-in', [], false)], ['out', 'Pulang', 'pulang', route('attendance.check-out', [], false)]] as [$suffix, $label, $type, $url])
 @php($modalOffice = $captureOffice ? ['name' => $captureOffice->name, 'lat' => (float) $captureOffice->latitude, 'lng' => (float) $captureOffice->longitude, 'radius' => (int) $captureOffice->radius_meters, 'enforce' => $suffix === 'out' ? (bool) $captureOffice->enforce_checkout_radius : (bool) $captureOffice->enforce_radius] : null)
 <div class="modal fade" id="check{{ ucfirst($suffix) }}Modal" tabindex="-1" data-url="{{ $url }}" data-type="{{ $type }}" data-office='@json($modalOffice)'>
     <div class="modal-dialog modal-dialog-centered">
@@ -186,6 +186,7 @@
                 const res = await fetch(modal.dataset.url, {
                     method: 'POST',
                     headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF },
+                    credentials: 'same-origin',
                     body: form,
                 });
                 const data = await res.json().catch(() => ({}));
@@ -204,7 +205,7 @@
                 modal.querySelector('[data-role="done-link"]').href = data.detail_url;
                 showStep('done');
             } catch (e) {
-                showError(e.message);
+                showError(e instanceof TypeError ? 'Tidak dapat terhubung ke server. Periksa koneksi internet lalu coba lagi.' : e.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>KONFIRMASI ABSENSI';
