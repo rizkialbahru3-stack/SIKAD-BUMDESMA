@@ -71,6 +71,31 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-6 order-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-lightning me-2 text-primary"></i>Poin Keterlambatan Otomatis</h2></div>
+            <div class="card-body">
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="auto_late_points_enabled" name="auto_late_points_enabled" value="1" @checked(old('auto_late_points_enabled', $settings->auto_late_points_enabled))><label class="form-check-label" for="auto_late_points_enabled">Aktifkan generate poin otomatis</label></div>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="form-label" for="late_points_block_minutes">Setiap (menit)</label>
+                        <input class="form-control @error('late_points_block_minutes') is-invalid @enderror" id="late_points_block_minutes" type="number" name="late_points_block_minutes" min="1" max="240" value="{{ old('late_points_block_minutes', $settings->late_points_block_minutes) }}" required>
+                        @error('late_points_block_minutes')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label" for="late_points_per_block">Poin per blok</label>
+                        <input class="form-control @error('late_points_per_block') is-invalid @enderror" id="late_points_per_block" type="number" name="late_points_per_block" min="0" max="100" value="{{ old('late_points_per_block', $settings->late_points_per_block) }}" required>
+                        @error('late_points_per_block')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-text mt-2">Contoh: setiap 15 menit = 1 poin. Bagian dari blok dihitung penuh. Poin hanya berupa catatan (tidak memotong gaji).</div>
+            </div>
+        </div>
+    </div>
     <div class="col-12 order-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body d-flex flex-wrap gap-2 justify-content-end">

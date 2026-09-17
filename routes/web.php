@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware('admin')->group(function () {
         Route::post('/recognition/rewards', [RecognitionController::class, 'storeReward'])->name('recognition.rewards.store');
+        Route::post('/recognition/auto-points', [RecognitionController::class, 'generateAutoPoints'])->name('recognition.auto-points');
         Route::post('/recognition/punishments', [RecognitionController::class, 'storePunishment'])->name('recognition.punishments.store');
         Route::delete('/recognition/rewards/{reward}', [RecognitionController::class, 'destroyReward'])->name('recognition.rewards.destroy');
         Route::delete('/recognition/punishments/{punishment}', [RecognitionController::class, 'destroyPunishment'])->name('recognition.punishments.destroy');

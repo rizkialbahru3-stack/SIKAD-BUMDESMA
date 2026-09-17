@@ -29,6 +29,32 @@
             </div>
         </form>
     @endif
+    @if (auth()->user()->isAdmin())
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body row g-3 align-items-end">
+                <div class="col-md-8">
+                    <h2 class="h6 mb-1"><i class="bi bi-lightning me-2 text-warning"></i>Poin keterlambatan otomatis</h2>
+                    <p class="small text-secondary mb-0">
+                        @if ($pointSettings->auto_late_points_enabled)
+                            Aturan aktif: setiap {{ $pointSettings->late_points_block_minutes }} menit
+                            = {{ $pointSettings->late_points_per_block }} poin (bagian blok dihitung penuh).
+                        @else
+                            Aturan sedang <strong>nonaktif</strong>.
+                        @endif
+                        Generate ulang periode yang sama akan mengganti hasil lama (input manual tidak tersentuh).
+                        Atur di <a href="{{ route('attendance.settings') }}">Pengaturan Absensi</a>.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <form method="POST" action="{{ route('recognition.auto-points') }}" class="d-flex gap-2">
+                        @csrf
+                        <input class="form-control" type="month" name="month" value="{{ now()->format('Y-m') }}" required>
+                        <button class="btn btn-warning text-nowrap" type="submit"><i class="bi bi-lightning me-1"></i>Generate</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="row g-4">
         <div class="col-xl-6">
             <div class="card border-0 shadow-sm h-100">
@@ -73,7 +99,11 @@
                     @forelse($punishments as $punishment)
                         <div class="list-group-item py-3">
                             <div class="d-flex justify-content-between gap-3">
-                                <div><strong>{{ $punishment->title }}</strong><small
+                                <div><strong>{{ $punishment->title }}</strong>
+                                    @if ($punishment->is_auto)
+                                        <span class="badge text-bg-info ms-1" title="Digenerate otomatis dari keterlambatan">Otomatis</span>
+                                    @endif
+                                    <small
                                         class="d-block text-secondary">{{ $punishment->employee?->user?->name }} ·
                                         {{ $punishment->issued_at->format('d M Y') }}</small>
                                     @if ($punishment->description)
@@ -81,7 +111,7 @@
                                     @endif
                                 </div>
                                 <div class="text-end"><span
-                                        class="badge text-bg-danger">{{ $punishment->type === 'salary_deduction' ? 'Rp ' . number_format($punishment->amount, 0, ',', '.') : ucfirst(str_replace('_', ' ', $punishment->type)) }}</span>
+                                        class="badge text-bg-danger">{{ $punishment->type === 'salary_deduction' ? 'Rp ' . number_format($punishment->amount, 0, ',', '.') : ($punishment->type === 'points_deduction' && $punishment->points > 0 ? $punishment->points . ' poin' : ucfirst(str_replace('_', ' ', $punishment->type))) }}</span>
                                     @if (auth()->user()->isAdmin())
                                         <form method="POST"
                                             action="{{ route('recognition.punishments.destroy', $punishment) }}"

@@ -30,9 +30,12 @@
     <div class="col-md-6">
         <label class="form-label" for="cor_status">Status</label>
         <select class="form-select @error('status') is-invalid @enderror" id="cor_status" name="status" required>
-            @foreach(['present' => 'Hadir', 'late' => 'Terlambat', 'leave' => 'Cuti', 'permission' => 'Izin', 'sick' => 'Sakit', 'absent' => 'Alpa'] as $value => $label)
+            @foreach(['present' => 'Hadir', 'late' => 'Terlambat', 'leave' => 'Cuti', 'sick' => 'Sakit', 'absent' => 'Alpa'] as $value => $label)
                 <option value="{{ $value }}" @selected(old('status', $attendance->status ?? 'present') === $value)>{{ $label }}</option>
             @endforeach
+            @if(old('status', $attendance->status ?? '') === 'permission')
+                <option value="permission" selected>Izin (data lama)</option>
+            @endif
         </select>
         @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
         <div class="form-text">Bila jam masuk diisi, status Hadir/Terlambat ditentukan otomatis dari jam kerja. Kosongkan kedua jam untuk Cuti/Izin/Sakit/Alpa.</div>

@@ -238,7 +238,7 @@
                             <td>{{ $item->employee?->user?->name }}</td>
                             <td>Punishment</td>
                             <td>{{ $item->title }}</td>
-                            <td>Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
+                            <td>{{ $item->type === 'points_deduction' && $item->points > 0 ? $item->points . ' poin' : 'Rp ' . number_format($item->amount, 0, ',', '.') }}</td>
                             <td>{{ $item->issued_at->format('d/m/Y') }}</td>
                         </tr>
                     @endforeach

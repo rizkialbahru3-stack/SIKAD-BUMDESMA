@@ -151,7 +151,7 @@ class ReportController extends Controller
             return ['headings' => ['ID Karyawan', 'Nama', 'Periode', 'Gaji Pokok', 'Reward', 'Potongan', 'Gaji Bersih', 'Status'], 'rows' => $payrolls->map(fn ($item) => [$item->employee?->employee_code, $item->employee?->user?->name, $item->period_start->format('m/Y'), $item->basic_salary, $item->reward_total, $item->late_deduction + $item->absence_deduction + $item->punishment_total, $item->net_salary, $item->status])->all()];
         }
         if ($type === 'reward-punishment') {
-            return ['headings' => ['Nama', 'Jenis', 'Keterangan', 'Nilai', 'Tanggal'], 'rows' => $rewards->map(fn ($item) => [$item->employee?->user?->name, 'Reward', $item->title, $item->amount, $item->awarded_at->format('d/m/Y')])->concat($punishments->map(fn ($item) => [$item->employee?->user?->name, 'Punishment', $item->title, $item->amount, $item->issued_at->format('d/m/Y')]))->all()];
+            return ['headings' => ['Nama', 'Jenis', 'Keterangan', 'Nilai', 'Tanggal'], 'rows' => $rewards->map(fn ($item) => [$item->employee?->user?->name, 'Reward', $item->title, $item->amount, $item->awarded_at->format('d/m/Y')])->concat($punishments->map(fn ($item) => [$item->employee?->user?->name, 'Punishment', $item->title, $item->type === 'points_deduction' && $item->points > 0 ? $item->points.' poin' : $item->amount, $item->issued_at->format('d/m/Y')]))->all()];
         }
 
         return ['headings' => ['ID Karyawan', 'Nama', 'Jabatan', 'Tanggal Bergabung', 'Status'], 'rows' => $employees->map(fn ($item) => [$item->employee_code, $item->display_name, $item->position?->name, $item->joined_at?->format('d/m/Y'), $item->is_active ? 'Aktif' : 'Nonaktif'])->all()];

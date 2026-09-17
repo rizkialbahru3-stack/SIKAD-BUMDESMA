@@ -23,7 +23,9 @@ class AttendanceSettingController extends Controller
             'late_tolerance_minutes' => ['required', 'integer', 'min:0', 'max:180'],
             'checkout_start_time' => ['required', 'date_format:H:i'],
             'checkout_end_time' => ['required', 'date_format:H:i', 'different:checkout_start_time'],
-        ]);
+            'late_points_block_minutes' => ['required', 'integer', 'min:1', 'max:240'],
+            'late_points_per_block' => ['required', 'integer', 'min:0', 'max:100'],
+        ]) + ['auto_late_points_enabled' => $request->boolean('auto_late_points_enabled')];
 
         AttendanceSetting::current()->update($data);
 

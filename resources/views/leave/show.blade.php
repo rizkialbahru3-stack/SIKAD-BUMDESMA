@@ -41,7 +41,7 @@
                     <div class="d-flex justify-content-between align-items-center gap-2 py-2 @unless($loop->last) border-bottom @endunless">
                         <div>
                             <strong class="d-block small">{{ $item->start_date->format('d M Y') }}</strong>
-                            <small class="text-secondary">{{ $item->type === 'leave' ? 'Cuti' : ($item->type === 'permission' ? 'Izin' : 'Sakit') }} · {{ $item->total_days }} hari</small>
+                            <small class="text-secondary">{{ $item->type === 'leave' ? 'Cuti' : ($item->type === 'sick' ? 'Sakit' : 'Izin') }} · {{ $item->total_days }} hari</small>
                         </div>
                         @if($item->status === 'approved')
                             <span class="badge text-bg-success">Disetujui</span>
@@ -75,7 +75,7 @@
             </div>
             <div class="card-body p-4">
                 <div class="row g-4 mb-4">
-                    <div class="col-sm-6"><small class="text-secondary d-block">Jenis Pengajuan</small><strong>{{ $leaveRequest->type === 'leave' ? 'Cuti' : ($leaveRequest->type === 'permission' ? 'Izin' : 'Sakit') }}</strong></div>
+                    <div class="col-sm-6"><small class="text-secondary d-block">Jenis Pengajuan</small><strong>{{ $leaveRequest->type === 'leave' ? 'Cuti' : ($leaveRequest->type === 'sick' ? 'Sakit' : 'Izin') }}</strong></div>
                     <div class="col-sm-6"><small class="text-secondary d-block">Jumlah Hari</small><strong>{{ $leaveRequest->total_days }} Hari</strong></div>
                     <div class="col-sm-6"><small class="text-secondary d-block">Tanggal Mulai</small><strong>{{ $leaveRequest->start_date->format('d F Y') }}</strong></div>
                     <div class="col-sm-6"><small class="text-secondary d-block">Tanggal Selesai</small><strong>{{ $leaveRequest->end_date->format('d F Y') }}</strong></div>
@@ -130,7 +130,7 @@
                     <p>Apakah Anda yakin ingin menyetujui pengajuan ini?</p>
                     <div class="bg-light rounded p-3 mb-3 small">
                         <div class="d-flex justify-content-between py-1"><span class="text-secondary">Nama</span><strong>{{ $leaveRequest->employee?->display_name }}</strong></div>
-                        <div class="d-flex justify-content-between py-1"><span class="text-secondary">Jenis</span><strong>{{ $leaveRequest->type === 'leave' ? 'Cuti' : ($leaveRequest->type === 'permission' ? 'Izin' : 'Sakit') }}</strong></div>
+                        <div class="d-flex justify-content-between py-1"><span class="text-secondary">Jenis</span><strong>{{ $leaveRequest->type === 'leave' ? 'Cuti' : ($leaveRequest->type === 'sick' ? 'Sakit' : 'Izin') }}</strong></div>
                         <div class="d-flex justify-content-between py-1"><span class="text-secondary">Periode</span><strong>{{ $leaveRequest->start_date->format('d M Y') }} - {{ $leaveRequest->end_date->format('d M Y') }}</strong></div>
                     </div>
                     <label class="form-label" for="review_note">Catatan Admin (opsional)</label>

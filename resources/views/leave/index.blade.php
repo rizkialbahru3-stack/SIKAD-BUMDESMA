@@ -3,11 +3,11 @@
 @section('content')
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1">Cuti & Izin</h1>
-        <p class="text-secondary mb-0">Kelola pengajuan, persetujuan, dan riwayat cuti serta izin karyawan.</p>
+        <h1 class="h3 mb-1">Cuti & Sakit</h1>
+        <p class="text-secondary mb-0">Kelola pengajuan, persetujuan, dan riwayat cuti serta sakit karyawan.</p>
     </div>
     @unless(auth()->user()->isAdmin())
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#leaveModal"><i class="bi bi-plus-lg me-2"></i>Ajukan izin</button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#leaveModal"><i class="bi bi-plus-lg me-2"></i>Buat pengajuan</button>
     @endunless
 </div>
 
@@ -40,7 +40,6 @@
                 <select class="form-select" id="type" name="type">
                     <option value="">Semua Jenis</option>
                     <option value="leave" @selected(($filters['type'] ?? '') === 'leave')>Cuti</option>
-                    <option value="permission" @selected(($filters['type'] ?? '') === 'permission')>Izin</option>
                     <option value="sick" @selected(($filters['type'] ?? '') === 'sick')>Sakit</option>
                 </select>
             </div>
@@ -133,11 +132,12 @@
                 <div class="modal-header"><h5 class="modal-title">Pengajuan baru</h5><button class="btn-close" data-bs-dismiss="modal" type="button"></button></div>
                 <div class="modal-body">
                     <label class="form-label">Jenis pengajuan</label>
-                    <select class="form-select mb-3" name="type" required><option value="leave">Cuti</option><option value="permission">Izin</option><option value="sick">Sakit</option></select>
+                    <select class="form-select mb-3" name="type" required><option value="leave">Cuti</option><option value="sick">Sakit</option></select>
                     <div class="row g-3 mb-3">
                         <div class="col-6"><label class="form-label">Mulai</label><input class="form-control" type="date" name="start_date" required></div>
                         <div class="col-6"><label class="form-label">Selesai</label><input class="form-control" type="date" name="end_date" required></div>
                     </div>
+                    <div class="form-text mb-3">Pengajuan <strong>cuti</strong> minimal 1 minggu (7 hari) sebelum tanggal mulai.</div>
                     <label class="form-label">Alasan</label>
                     <textarea class="form-control mb-3" name="reason" rows="3" required></textarea>
                     <label class="form-label">Dokumen pendukung</label>

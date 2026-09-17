@@ -15,8 +15,7 @@
                     <div class="d-grid gap-2">
                         <button class="btn btn-primary btn-lg" type="button" data-role="btn-capture" disabled><i class="bi bi-camera me-2"></i>AMBIL FOTO</button>
                         <button class="btn btn-outline-secondary" type="button" data-role="btn-start"><i class="bi bi-arrow-clockwise me-2"></i>Coba Lagi Kamera</button>
-                        <label class="btn btn-light border mb-0" for="fallback-{{ $suffix }}"><i class="bi bi-upload me-2"></i>atau Upload Foto</label>
-                        <input class="d-none" id="fallback-{{ $suffix }}" type="file" accept="image/*" data-role="file">
+                        <div class="form-text text-center">Foto wajib diambil langsung dari kamera — tidak dapat upload file.</div>
                     </div>
                 </div>
                 <div class="d-none" data-role="step-preview">
@@ -91,7 +90,7 @@
             q('btn-capture').disabled = true;
             stopCamera();
             if (!navigator.mediaDevices?.getUserMedia) {
-                q('camera-hint').innerHTML = '<span class="text-secondary">Kamera tidak didukung — silakan <strong>Upload Foto</strong>.</span>';
+                q('camera-hint').innerHTML = '<span class="text-danger">Perangkat tidak mendukung kamera — absensi lewat foto tidak dapat dilakukan dari perangkat ini.</span>';
                 return;
             }
             try {
@@ -101,7 +100,7 @@
                 q('camera-hint').innerHTML = '<span class="text-success">🟢 Kamera siap — posisikan wajah lalu tekan AMBIL FOTO.</span>';
                 q('btn-capture').disabled = false;
             } catch (e) {
-                q('camera-hint').innerHTML = '<span class="text-danger">Kamera diperlukan untuk mengambil foto absensi. Silakan izinkan akses kamera atau gunakan <strong>Upload Foto</strong>.</span>';
+                q('camera-hint').innerHTML = '<span class="text-danger">Kamera diperlukan untuk mengambil foto absensi. Silakan izinkan akses kamera lalu tekan Coba Lagi Kamera.</span>';
             }
         }
 
@@ -155,17 +154,8 @@
             }, 'image/jpeg', 0.85);
         });
 
-        q('file').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { showError('Format foto harus JPG, PNG, atau WEBP.'); return; }
-            if (file.size > 2 * 1024 * 1024) { showError('Ukuran foto maksimal 2 MB.'); return; }
-            useBlob(file, URL.createObjectURL(file));
-        });
-
         q('btn-retake').addEventListener('click', function () {
             photoBlob = null;
-            q('file').value = '';
             showStep('camera');
             startCamera();
         });
@@ -218,7 +208,6 @@
         modal.addEventListener('shown.bs.modal', function () {
             hideError();
             photoBlob = null;
-            q('file').value = '';
             showStep('camera');
             startCamera();
         });

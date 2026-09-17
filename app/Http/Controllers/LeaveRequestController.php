@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class LeaveRequestController extends Controller
 {
@@ -17,7 +18,7 @@ class LeaveRequestController extends Controller
     {
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
-            'type' => ['nullable', 'in:leave,permission,sick'],
+            'type' => ['nullable', 'in:leave,sick'],
             'status' => ['nullable', 'in:pending,approved,rejected'],
             'date_from' => ['nullable', 'date'],
             'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
@@ -77,7 +78,7 @@ class LeaveRequestController extends Controller
             'leaveRequest' => $leaveRequest,
             'history' => $history,
             'quota' => $leaveRequest->type === 'leave' && $leaveRequest->employee ? LeaveQuota::usage($leaveRequest->employee) : null,
-            'title' => 'Detail Pengajuan Cuti & Izin',
+            'title' => 'Detail Pengajuan Cuti & Sakit',
         ]);
     }
 
@@ -87,7 +88,7 @@ class LeaveRequestController extends Controller
         abort_unless($employee?->is_active, 403, 'Akun karyawan belum terhubung.');
 
         $data = $request->validate([
-            'type' => ['required', 'in:leave,permission,sick'],
+            'type' => ['required', 'in:leave,sick'],
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'reason' => ['required', 'string', 'max:2000'],
@@ -96,6 +97,13 @@ class LeaveRequestController extends Controller
         $data['employee_id'] = $employee->id;
         $data['total_days'] = CarbonPeriod::create($data['start_date'], $data['end_date'])->count();
         $data['attachment_path'] = $request->file('attachment')?->store('leave-attachments');
+
+        // Cuti wajib diajukan minimal 1 minggu (7 hari kalender) sebelumnya.
+        if ($data['type'] === 'leave' && $data['start_date'] < now()->addDays(7)->toDateString()) {
+            throw ValidationException::withMessages([
+                'start_date' => 'Pengajuan cuti minimal 1 minggu (7 hari) sebelum tanggal mulai cuti.',
+            ]);
+        }
 
         LeaveRequest::create($data);
 

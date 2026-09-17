@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Punishment extends Model
 {
-    protected $fillable = ['employee_id', 'punishment_rule_id', 'type', 'amount', 'title', 'description', 'issued_at'];
+    protected $fillable = ['employee_id', 'punishment_rule_id', 'type', 'amount', 'points', 'is_auto', 'title', 'description', 'issued_at'];
 
-    protected $casts = ['amount' => 'decimal:2', 'issued_at' => 'date'];
+    protected $casts = ['amount' => 'decimal:2', 'issued_at' => 'date', 'is_auto' => 'boolean'];
 
     public function employee(): BelongsTo
     {
