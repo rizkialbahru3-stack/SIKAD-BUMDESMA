@@ -14,10 +14,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ContentSeeder::class);
         $this->call(AttendanceSeeder::class);
-        // Data karyawan demo (KRY-002–KRY-006) hanya untuk non-production.
-        if (! app()->isProduction()) {
-            $this->call(DemoKaryawanSeeder::class);
-        }
         $this->call(AttendanceLocationSeeder::class);
         // Karyawan tetap (KRY-007 dst.) dibuat di semua environment termasuk production.
         $this->call(KaryawanBaruSeeder::class);

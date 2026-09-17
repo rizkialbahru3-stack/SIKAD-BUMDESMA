@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Employee;
 use App\Models\Position;
 use App\Models\User;
 use App\Models\WorkSchedule;
@@ -31,22 +30,6 @@ class AttendanceSeeder extends Seeder
             'name' => 'Administrator',
             'role' => 'admin',
             'password' => Hash::make('password'),
-        ]);
-        $employeeUser = User::updateOrCreate(['email' => 'kry-001@bumdesma.test'], [
-            'name' => 'Karyawan 1',
-            'role' => 'employee',
-            'password' => Hash::make('password'),
-        ]);
-
-        Employee::updateOrCreate(['employee_code' => 'KRY-001'], [
-            'user_id' => $employeeUser->id,
-            'position_id' => $position->id,
-            'work_schedule_id' => $schedule->id,
-            'phone' => '081234567890',
-            'joined_at' => now()->startOfYear(),
-            'basic_salary' => 3000000,
-            'attendance_allowance' => 500000,
-            'is_active' => true,
         ]);
 
         $admin->update(['role' => 'admin']);
