@@ -59,7 +59,10 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // TLS wajib untuk MySQL cloud (TiDB Cloud/Aiven). Set DB_SSL=true untuk memakai
+                // CA bawaan repo (database/certs, cocok untuk TiDB yang sertifikatnya dari Let's Encrypt),
+                // atau isi MYSQL_ATTR_SSL_CA dengan path file CA lain bila dibutuhkan.
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', env('DB_SSL') ? database_path('certs/isrg-root-x1.pem') : null),
             ]) : [],
         ],
 

@@ -3,8 +3,14 @@
 @section('content')
 <div class="mb-4 d-flex flex-wrap gap-2 align-items-center">
     <a class="text-decoration-none me-auto" href="{{ route('attendance.index') }}"><i class="bi bi-arrow-left me-2"></i>Kembali ke Data Kehadiran</a>
+    @if($attendance->check_in_at && ! $attendance->check_in_photo)<span class="badge text-bg-info" title="Dicatat manual oleh admin tanpa foto/GPS">Input manual</span>@endif
+    @if(auth()->user()->isAdmin())<a class="btn btn-sm btn-outline-warning" href="{{ route('attendance.corrections.edit', $attendance) }}"><i class="bi bi-pencil me-1"></i>Koreksi</a>@endif
     <span class="badge text-bg-{{ $attendance->status === 'late' ? 'warning' : ($attendance->status === 'present' ? 'success' : 'secondary') }} fs-6">{{ ['present' => 'Hadir', 'late' => 'Terlambat', 'leave' => 'Cuti', 'permission' => 'Izin', 'sick' => 'Sakit', 'absent' => 'Alpa'][$attendance->status] ?? ucfirst($attendance->status) }}</span>
 </div>
+
+@if($attendance->note)
+<div class="alert alert-info d-flex align-items-start gap-2"><i class="bi bi-info-circle-fill mt-1"></i><div><strong>Keterangan:</strong> {{ $attendance->note }}</div></div>
+@endif
 
 <div class="card border-0 shadow-sm mb-4"><div class="card-body p-4 d-flex flex-wrap align-items-center gap-3">
     @if($attendance->employee?->photo)<img src="{{ asset('storage/'.$attendance->employee->photo) }}" class="rounded-circle" width="64" height="64" style="object-fit:cover" alt="Foto profil">@else<span class="employee-avatar" style="width:64px;height:64px;font-size:1.5rem">{{ strtoupper(substr($attendance->employee?->display_name ?? '-', 0, 1)) }}</span>@endif

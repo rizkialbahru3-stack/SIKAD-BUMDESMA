@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
             $this->call(DemoKaryawanSeeder::class);
         }
         $this->call(AttendanceLocationSeeder::class);
+        // Karyawan tetap (KRY-007 dst.) dibuat di semua environment termasuk production.
+        $this->call(KaryawanBaruSeeder::class);
     }
 }

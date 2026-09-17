@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceCorrectionController;
 use App\Http\Controllers\AttendanceLocationController;
 use App\Http\Controllers\AttendanceSettingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\PasswordResetController;
@@ -41,6 +43,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::middleware('admin')->prefix('attendance/corrections')->name('attendance.corrections.')->group(function () {
+        Route::get('/create', [AttendanceCorrectionController::class, 'create'])->name('create');
+        Route::post('/', [AttendanceCorrectionController::class, 'store'])->name('store');
+        Route::get('/{attendance}/edit', [AttendanceCorrectionController::class, 'edit'])->name('edit');
+        Route::put('/{attendance}', [AttendanceCorrectionController::class, 'update'])->name('update');
+    });
     Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])->whereNumber('attendance')->name('attendance.show');
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.check-in');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.check-out');
@@ -100,6 +108,12 @@ Route::middleware('auth')->group(function () {
         });
         Route::post('/payroll/generate', [PayrollController::class, 'generate'])->name('payroll.generate');
         Route::patch('/payroll/{payroll}/status', [PayrollController::class, 'updateStatus'])->name('payroll.status');
+    });
+    Route::middleware('admin')->prefix('holidays')->name('holidays.')->group(function () {
+        Route::get('/', [HolidayController::class, 'index'])->name('index');
+        Route::post('/', [HolidayController::class, 'store'])->name('store');
+        Route::put('/{holiday}', [HolidayController::class, 'update'])->name('update');
+        Route::delete('/{holiday}', [HolidayController::class, 'destroy'])->name('destroy');
     });
     Route::middleware('admin')->group(function () {
         Route::post('/recognition/rewards', [RecognitionController::class, 'storeReward'])->name('recognition.rewards.store');

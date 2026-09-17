@@ -15,6 +15,14 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+// Vercel serverless: satu-satunya direktori yang bisa ditulis adalah /tmp.
+// Alihkan storage ke sana agar log, cache, dan upload tidak crash di filesystem read-only.
+if (isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
+    $app->useStoragePath('/tmp/laravel-storage');
+    @mkdir('/tmp/views', 0755, true);
+    @mkdir('/tmp/laravel-storage/app/public', 0755, true);
+}
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
