@@ -15,6 +15,7 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecognitionController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\VisitAttendanceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +69,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/leave-requests', [LeaveRequestController::class, 'store'])->name('leave.store');
     Route::patch('/leave-requests/{leaveRequest}/review', [LeaveRequestController::class, 'review'])->middleware('admin')->name('leave.review');
     Route::get('/recognition', [RecognitionController::class, 'index'])->name('recognition.index');
+    Route::get('/visits', [VisitAttendanceController::class, 'index'])->name('visits.index');
+    Route::post('/visits', [VisitAttendanceController::class, 'store'])->name('visits.store');
+    Route::delete('/visits/{visit}', [VisitAttendanceController::class, 'destroy'])->name('visits.destroy');
     Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
