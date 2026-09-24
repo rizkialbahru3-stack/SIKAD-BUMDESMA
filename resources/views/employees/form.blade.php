@@ -2,12 +2,21 @@
 
 @section('content')
 <div class="mb-4">
-    <a class="text-decoration-none" href="{{ route('employees.index') }}"><i class="bi bi-arrow-left me-2"></i>Kembali ke Data Karyawan</a>
+    <a class="text-decoration-none" href="{{ route('employees.index') }}">
+        <i class="bi bi-arrow-left me-2">
+        </i>Kembali ke Data Karyawan</a>
     <h1 class="h3 mt-3 mb-1">{{ $employee->exists ? 'Edit Data Karyawan' : 'Tambah Karyawan' }}</h1>
-    <p class="text-secondary mb-0">{{ $employee->exists ? 'Perbarui informasi profil, pengaturan kerja, dan akun karyawan.' : 'Lengkapi informasi karyawan baru.' }}</p>
+    <p class="text-secondary mb-0">
+        {{ $employee->exists ? 'Perbarui informasi profil, pengaturan kerja, dan akun karyawan.' : 'Lengkapi informasi karyawan baru.' }}
+    </p>
 </div>
 
-<form method="POST" action="{{ $employee->exists ? route('employees.update', $employee) : route('employees.store') }}" class="row g-4" id="employee-form" enctype="multipart/form-data">
+<form
+    method="POST"
+    action="{{ $employee->exists ? route('employees.update', $employee) : route('employees.store') }}"
+    class="row g-4"
+    id="employee-form"
+    enctype="multipart/form-data">
     @csrf
     @if($employee->exists)
         @method('PUT')
@@ -15,24 +24,46 @@
 
     <div class="col-lg-6 order-1 order-lg-1">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>Informasi Profil</h2></div>
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-person-badge me-2 text-primary">
+                    </i>Informasi Profil</h2>
+            </div>
             <div class="card-body">
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <div class="employee-avatar employee-preview-avatar" style="width:84px;height:84px;font-size:2rem">
                         @if($employee->photo)
                             <img src="{{ asset('storage/'.$employee->photo) }}" alt="Foto saat ini">
                         @else
-                            <span>{{ strtoupper(substr($employee->display_name !== '-' ? $employee->display_name : 'K', 0, 1)) }}</span>
+                            <span>
+                                {{ strtoupper(substr($employee->display_name !== '-' ? $employee->display_name : 'K', 0, 1)) }}
+                            </span>
                         @endif
                     </div>
                     <div>
-                        <label for="photo" class="btn btn-outline-primary btn-sm mb-2"><i class="bi bi-camera me-1"></i>Ganti Foto</label>
+                        <label for="photo" class="btn btn-outline-primary btn-sm mb-2">
+                            <i class="bi bi-camera me-1">
+                            </i>Ganti Foto</label>
                         <input class="d-none" id="photo" type="file" name="photo" accept=".jpg,.jpeg,.png,.webp">
                         @if($employee->photo)
-                            <button type="button" id="remove-photo-btn" class="btn btn-outline-danger btn-sm mb-2 ms-1"><i class="bi bi-trash me-1"></i>Hapus Foto</button>
+                            <button type="button" id="remove-photo-btn" class="btn btn-outline-danger btn-sm mb-2 ms-1">
+                                <i class="bi bi-trash me-1">
+                                </i>Hapus Foto</button>
                         @endif
                         <input type="checkbox" name="remove_photo" value="1" id="remove_photo" class="d-none">
-                        <div class="form-text">JPG, JPEG, PNG, WEBP — maksimal 2 MB. Preview tampil sebelum disimpan.</div>
+                        <div
+                            class="form-text">JPG,
+                            JPEG,
+                            PNG,
+                            WEBP
+                            —
+                            maksimal
+                            2
+                            MB.
+                            Preview
+                            tampil
+                            sebelum
+                            disimpan.</div>
                         @error('photo')
                             <div class="text-danger small">{{ $message }}</div>
                         @enderror
@@ -40,7 +71,12 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="name">Nama Lengkap</label>
-                    <input class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $employee->display_name !== '-' ? $employee->display_name : '') }}" required>
+                    <input
+                        class="form-control @error('name') is-invalid @enderror"
+                        id="name"
+                        name="name"
+                        value="{{ old('name', $employee->display_name !== '-' ? $employee->display_name : '') }}"
+                        required>
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -50,7 +86,10 @@
                     @if($employee->exists)
                         <input type="hidden" name="employee_code" value="{{ $employee->employee_code }}">
                         <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <span class="input-group-text">
+                                <i class="bi bi-lock">
+                                </i>
+                            </span>
                             <input class="form-control bg-light" value="{{ $employee->employee_code }}" readonly>
                         </div>
                         <div class="form-text">ID karyawan dibuat otomatis dan tidak dapat diubah.</div>
@@ -61,14 +100,24 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label" for="phone">Nomor Telepon</label>
-                        <input class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone', $employee->phone) }}">
+                        <input
+                            class="form-control @error('phone') is-invalid @enderror"
+                            id="phone"
+                            name="phone"
+                            value="{{ old('phone', $employee->phone) }}">
                         @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="joined_at">Tanggal Bergabung</label>
-                        <input class="form-control @error('joined_at') is-invalid @enderror" id="joined_at" type="date" name="joined_at" value="{{ old('joined_at', $employee->joined_at?->format('Y-m-d')) }}" required>
+                        <input
+                            class="form-control @error('joined_at') is-invalid @enderror"
+                            id="joined_at"
+                            type="date"
+                            name="joined_at"
+                            value="{{ old('joined_at', $employee->joined_at?->format('Y-m-d')) }}"
+                            required>
                         @error('joined_at')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -80,14 +129,26 @@
 
     <div class="col-lg-6 order-2 order-lg-2">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-briefcase me-2 text-primary"></i>Pengaturan Kerja</h2></div>
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-briefcase me-2 text-primary">
+                    </i>Pengaturan Kerja</h2>
+            </div>
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label" for="position_id">Jabatan</label>
-                    <select class="form-select @error('position_id') is-invalid @enderror" id="position_id" name="position_id" required>
+                    <select
+                        class="form-select @error('position_id') is-invalid @enderror"
+                        id="position_id"
+                        name="position_id"
+                        required>
                         <option value="">Pilih jabatan</option>
                         @foreach($positions as $position)
-                            <option value="{{ $position->id }}" @selected(old('position_id', $employee->position_id) == $position->id)>{{ $position->name }}</option>
+                            <option
+                                value="{{ $position->id }}"
+                                @selected(old('position_id', $employee->position_id) == $position->id)>
+                            {{ $position->name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('position_id')
@@ -96,10 +157,17 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="work_schedule_id">Jadwal Kerja</label>
-                    <select class="form-select @error('work_schedule_id') is-invalid @enderror" id="work_schedule_id" name="work_schedule_id">
+                    <select
+                        class="form-select @error('work_schedule_id') is-invalid @enderror"
+                        id="work_schedule_id"
+                        name="work_schedule_id">
                         <option value="">Pilih jadwal</option>
                         @foreach($schedules as $schedule)
-                            <option value="{{ $schedule->id }}" @selected(old('work_schedule_id', $employee->work_schedule_id) == $schedule->id)>{{ $schedule->name }} ({{ substr($schedule->start_time, 0, 5) }} - {{ substr($schedule->end_time, 0, 5) }})</option>
+                            <option
+                                value="{{ $schedule->id }}"
+                                @selected(old('work_schedule_id', $employee->work_schedule_id) == $schedule->id)>
+                            {{ $schedule->name }} ({{ substr($schedule->start_time, 0, 5) }} - {{ substr($schedule->end_time, 0, 5) }})
+                            </option>
                         @endforeach
                     </select>
                     @error('work_schedule_id')
@@ -115,7 +183,11 @@
                                 <option value="1" @selected($statusActive)>Aktif</option>
                                 <option value="0" @selected(! $statusActive)>Nonaktif</option>
                             </select>
-                            <span id="status-badge" class="badge {{ $statusActive ? 'text-bg-success' : 'text-bg-secondary' }}">{{ $statusActive ? 'Aktif' : 'Nonaktif' }}</span>
+                            <span
+                                id="status-badge"
+                                class="badge {{ $statusActive ? 'text-bg-success' : 'text-bg-secondary' }}">
+                            {{ $statusActive ? 'Aktif' : 'Nonaktif' }}
+                            </span>
                         </div>
                     </div>
                 @endif
@@ -125,15 +197,28 @@
 
     <div class="col-lg-6 order-3 order-lg-4">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-cash-coin me-2 text-primary"></i>Kompensasi</h2></div>
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-cash-coin me-2 text-primary">
+                    </i>Kompensasi</h2>
+            </div>
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label" for="basic_salary_display">Gaji Pokok</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input class="form-control" id="basic_salary_display" type="text" inputmode="numeric" autocomplete="off">
+                        <input
+                            class="form-control"
+                            id="basic_salary_display"
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off">
                     </div>
-                    <input type="hidden" name="basic_salary" id="basic_salary" value="{{ old('basic_salary', $employee->basic_salary ?? 0) }}">
+                    <input
+                        type="hidden"
+                        name="basic_salary"
+                        id="basic_salary"
+                        value="{{ old('basic_salary', $employee->basic_salary ?? 0) }}">
                     @error('basic_salary')
                         <div class="text-danger small">{{ $message }}</div>
                     @enderror
@@ -142,9 +227,18 @@
                     <label class="form-label" for="attendance_allowance_display">Uang Kehadiran</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input class="form-control" id="attendance_allowance_display" type="text" inputmode="numeric" autocomplete="off">
+                        <input
+                            class="form-control"
+                            id="attendance_allowance_display"
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off">
                     </div>
-                    <input type="hidden" name="attendance_allowance" id="attendance_allowance" value="{{ old('attendance_allowance', $employee->attendance_allowance ?? 0) }}">
+                    <input
+                        type="hidden"
+                        name="attendance_allowance"
+                        id="attendance_allowance"
+                        value="{{ old('attendance_allowance', $employee->attendance_allowance ?? 0) }}">
                     @error('attendance_allowance')
                         <div class="text-danger small">{{ $message }}</div>
                     @enderror
@@ -156,13 +250,27 @@
 
     <div class="col-lg-6 order-4 order-lg-3">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-shield-lock me-2 text-primary"></i>Akun dan Keamanan</h2></div>
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-shield-lock me-2 text-primary">
+                    </i>Akun dan Keamanan</h2>
+            </div>
             <div class="card-body">
                 @if($employee->exists && $employee->user)
-                    <div class="alert alert-success d-flex align-items-center gap-2 mb-3"><i class="bi bi-check-circle-fill"></i><span>Akun <strong>Aktif dan Terhubung</strong> dengan role Karyawan.</span></div>
+                    <div class="alert alert-success d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-check-circle-fill">
+                        </i>
+                        <span>Akun <strong>Aktif dan Terhubung</strong> dengan role Karyawan.</span>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label" for="account-email">Email Login</label>
-                        <input class="form-control @error('email') is-invalid @enderror" id="account-email" type="email" name="email" value="{{ old('email', $employee->display_email) }}" required>
+                        <input
+                            class="form-control @error('email') is-invalid @enderror"
+                            id="account-email"
+                            type="email"
+                            name="email"
+                            value="{{ old('email', $employee->display_email) }}"
+                            required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -171,13 +279,25 @@
                         <label class="form-label">Role</label>
                         <input class="form-control bg-light" value="Karyawan (otomatis, dikelola sistem)" readonly>
                     </div>
-                    <button class="btn btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#password-collapse" aria-expanded="false">
-                        <i class="bi bi-lock me-2"></i>Ubah Password
+                    <button
+                        class="btn btn-outline-secondary w-100"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#password-collapse"
+                        aria-expanded="false">
+                        <i class="bi bi-lock me-2">
+                        </i>Ubah Password
                     </button>
                     <div class="collapse mt-3" id="password-collapse">
                         <div class="mb-3">
                             <label class="form-label" for="account-password">Password Baru</label>
-                            <input class="form-control @error('password') is-invalid @enderror" id="account-password" type="password" name="password" minlength="8" autocomplete="new-password">
+                            <input
+                                class="form-control @error('password') is-invalid @enderror"
+                                id="account-password"
+                                type="password"
+                                name="password"
+                                minlength="8"
+                                autocomplete="new-password">
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -185,19 +305,56 @@
                         </div>
                         <div class="mb-0">
                             <label class="form-label" for="account-password-confirm">Konfirmasi Password Baru</label>
-                            <input class="form-control" id="account-password-confirm" type="password" name="password_confirmation" minlength="8" autocomplete="new-password">
+                            <input
+                                class="form-control"
+                                id="account-password-confirm"
+                                type="password"
+                                name="password_confirmation"
+                                minlength="8"
+                                autocomplete="new-password">
                         </div>
                     </div>
                 @else
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="create_account" value="1" id="create_account" @checked(old('create_account'))>
-                        <label class="form-check-label fw-semibold" for="create_account">Buatkan Akun Login untuk Karyawan</label>
-                        <div class="form-text">Jika dicentang, sistem membuat akun User dengan role Karyawan yang terhubung ke data ini.</div>
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            name="create_account"
+                            value="1"
+                            id="create_account"
+                            @checked(old('create_account'))>
+                        <label
+                            class="form-check-label fw-semibold"
+                            for="create_account">Buatkan
+                            Akun
+                            Login
+                            untuk
+                            Karyawan</label>
+                        <div
+                            class="form-text">Jika
+                            dicentang,
+                            sistem
+                            membuat
+                            akun
+                            User
+                            dengan
+                            role
+                            Karyawan
+                            yang
+                            terhubung
+                            ke
+                            data
+                            ini.</div>
                     </div>
                     <div id="account-fields" class="row g-3" style="{{ old('create_account') ? '' : 'display:none' }}">
                         <div class="col-md-6">
                             <label class="form-label" for="new-email">Email Login</label>
-                            <input class="form-control @error('email') is-invalid @enderror" id="new-email" type="email" name="email" value="{{ old('email', $employee->display_email) }}">
+                            <input
+                                class="form-control @error('email') is-invalid @enderror"
+                                id="new-email"
+                                type="email"
+                                name="email"
+                                value="{{ old('email', $employee->display_email) }}">
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -208,7 +365,13 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="new-password">Password</label>
-                            <input class="form-control @error('password') is-invalid @enderror" id="new-password" type="password" name="password" minlength="8" autocomplete="new-password">
+                            <input
+                                class="form-control @error('password') is-invalid @enderror"
+                                id="new-password"
+                                type="password"
+                                name="password"
+                                minlength="8"
+                                autocomplete="new-password">
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -216,7 +379,13 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="new-password-confirm">Konfirmasi Password</label>
-                            <input class="form-control" id="new-password-confirm" type="password" name="password_confirmation" minlength="8" autocomplete="new-password">
+                            <input
+                                class="form-control"
+                                id="new-password-confirm"
+                                type="password"
+                                name="password_confirmation"
+                                minlength="8"
+                                autocomplete="new-password">
                         </div>
                     </div>
                 @endif
@@ -228,10 +397,16 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body d-flex flex-wrap align-items-center gap-2 justify-content-between">
                 <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-light border" href="{{ route('employees.index') }}"><i class="bi bi-arrow-left me-2"></i>Kembali</a>
-                    <a class="btn btn-light border" href="{{ $employee->exists ? route('employees.show', $employee) : route('employees.index') }}">Batal</a>
+                    <a class="btn btn-light border" href="{{ route('employees.index') }}">
+                        <i class="bi bi-arrow-left me-2">
+                        </i>Kembali</a>
+                    <a
+                        class="btn btn-light border"
+                        href="{{ $employee->exists ? route('employees.show', $employee) : route('employees.index') }}">Batal</a>
                 </div>
-                <button class="btn btn-primary px-4" id="save-btn" type="submit"><i class="bi bi-save me-2"></i>Simpan Perubahan</button>
+                <button class="btn btn-primary px-4" id="save-btn" type="submit">
+                    <i class="bi bi-save me-2">
+                    </i>Simpan Perubahan</button>
             </div>
         </div>
     </div>

@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Sistem Informasi BUMDESMA LKD TARUB — absensi, penggajian, dan layanan digital desa.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+        name="description"
+        content="Sistem Informasi BUMDESMA LKD TARUB — absensi, penggajian, dan layanan digital desa.">
     <title>BUMDESMA LKD TARUB</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         *{box-sizing:border-box}html{scroll-behavior:smooth;overflow-x:clip}body{margin:0;font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#fff;background:#2e4a75;overflow-x:clip}
         img{height:auto}
@@ -116,20 +124,57 @@
 </head>
 <body>
     <div class="hero" id="home">
-        <span class="orb o1" aria-hidden="true"></span><span class="orb o2" aria-hidden="true"></span>
-        <nav class="nav"><div class="nav-links" id="navLinks"><a href="#home" class="active">Home</a><a href="#fitur">Fitur</a><a href="#kontak">Kontak Kami</a></div><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks" id="navToggle"><i class="bi bi-list"></i><span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buka navigasi</span></button></nav>
+        <span class="orb o1" aria-hidden="true">
+        </span>
+        <span class="orb o2" aria-hidden="true">
+        </span>
+        <nav class="nav">
+            <div class="nav-links" id="navLinks">
+                <a href="#home" class="active">Home</a>
+                <a href="#fitur">Fitur</a>
+                <a href="#kontak">Kontak Kami</a>
+            </div>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks" id="navToggle">
+                <i class="bi bi-list">
+                </i>
+                <span
+                    class="sr-only"
+                    style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buka
+                    navigasi</span>
+            </button>
+        </nav>
         <div class="hero-body">
             <div>
                 <h1 class="hero-title hero-anim d1">BUMDESMA</h1>
-                <p class="hero-sub hero-anim d2">Selamat datang di Sistem Informasi BUMDESMA<br>LKD TARUB, Tarub — Kabupaten Tegal</p>
+                <p
+                    class="hero-sub hero-anim d2">Selamat
+                    datang
+                    di
+                    Sistem
+                    Informasi
+                    BUMDESMA<br>LKD
+                    TARUB,
+                    Tarub
+                    —
+                    Kabupaten
+                    Tegal</p>
                 <a class="btn-masuk hero-anim d3" href="{{ route('login') }}">Masuk</a>
             </div>
             <div class="art">
                 <div class="blob">
-                    <span class="chip c1"><i class="bi bi-fingerprint"></i> Absensi Digital</span>
-                    <img class="logo" src="{{ asset('images/logo-bumdesma.png') }}" alt="Logo Kantor BUMDESMA LKD TARUB">
-                    <span class="chip c2"><i class="bi bi-cash-stack"></i> Penggajian</span>
-                    <span class="chip c3"><i class="bi bi-bar-chart"></i> Laporan & Cuti</span>
+                    <span class="chip c1">
+                        <i class="bi bi-fingerprint">
+                        </i> Absensi Digital</span>
+                    <img
+                        class="logo"
+                        src="{{ asset('images/logo-bumdesma.png') }}"
+                        alt="Logo Kantor BUMDESMA LKD TARUB">
+                    <span class="chip c2">
+                        <i class="bi bi-cash-stack">
+                        </i> Penggajian</span>
+                    <span class="chip c3">
+                        <i class="bi bi-bar-chart">
+                        </i> Laporan & Cuti</span>
                 </div>
             </div>
         </div>
@@ -137,10 +182,18 @@
     <div class="strip">
         <div class="strip-inner">
             <img class="reveal" src="{{ asset('images/logo-bumdesma.png') }}" alt="Logo BUMDESMA LKD TARUB">
-            <span class="strip-item reveal"><i class="bi bi-buildings"></i> PEMERINTAH DESA</span>
-            <span class="strip-item reveal"><i class="bi bi-people"></i> MASYARAKAT TARUB</span>
-            <span class="strip-item reveal"><i class="bi bi-globe2"></i> MITRA LOKAL</span>
-            <span class="strip-item reveal"><i class="bi bi-stars"></i> UMKM BINAAN</span>
+            <span class="strip-item reveal">
+                <i class="bi bi-buildings">
+                </i> PEMERINTAH DESA</span>
+            <span class="strip-item reveal">
+                <i class="bi bi-people">
+                </i> MASYARAKAT TARUB</span>
+            <span class="strip-item reveal">
+                <i class="bi bi-globe2">
+                </i> MITRA LOKAL</span>
+            <span class="strip-item reveal">
+                <i class="bi bi-stars">
+                </i> UMKM BINAAN</span>
         </div>
     </div>
     <section class="section" id="fitur">
@@ -148,10 +201,30 @@
             <h2 class="reveal">Fitur Sistem</h2>
             <p class="reveal">Empat layanan digital utama untuk pengurus dan karyawan BUMDESMA LKD TARUB.</p>
             <div class="grid">
-                <div class="card reveal"><i class="bi bi-fingerprint"></i><h3>Absensi Digital</h3><p>Catat kehadiran masuk dan pulang harian dengan rekap otomatis.</p></div>
-                <div class="card reveal"><i class="bi bi-file-earmark-text"></i><h3>Cuti & Izin</h3><p>Ajukan cuti, izin, atau sakit dan pantau status persetujuan.</p></div>
-                <div class="card reveal"><i class="bi bi-cash-stack"></i><h3>Penggajian</h3><p>Lihat slip gaji, tunjangan, reward, dan potongan secara transparan.</p></div>
-                <div class="card reveal"><i class="bi bi-bar-chart"></i><h3>Laporan</h3><p>Rekap kehadiran, cuti, dan penggajian yang siap diunduh PDF/Excel.</p></div>
+                <div class="card reveal">
+                    <i class="bi bi-fingerprint">
+                    </i>
+                    <h3>Absensi Digital</h3>
+                    <p>Catat kehadiran masuk dan pulang harian dengan rekap otomatis.</p>
+                </div>
+                <div class="card reveal">
+                    <i class="bi bi-file-earmark-text">
+                    </i>
+                    <h3>Cuti & Izin</h3>
+                    <p>Ajukan cuti, izin, atau sakit dan pantau status persetujuan.</p>
+                </div>
+                <div class="card reveal">
+                    <i class="bi bi-cash-stack">
+                    </i>
+                    <h3>Penggajian</h3>
+                    <p>Lihat slip gaji, tunjangan, reward, dan potongan secara transparan.</p>
+                </div>
+                <div class="card reveal">
+                    <i class="bi bi-bar-chart">
+                    </i>
+                    <h3>Laporan</h3>
+                    <p>Rekap kehadiran, cuti, dan penggajian yang siap diunduh PDF/Excel.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -160,13 +233,34 @@
             <div class="reveal">
                 <h2>Kontak Kami</h2>
                 <p>Terbuka untuk informasi, kolaborasi, dan cerita baru dari masyarakat Tarub.</p>
-                <div class="line"><i class="bi bi-geo-alt"></i><span>Tarub, Kabupaten Tegal, Jawa Tengah</span></div>
-                <div class="line"><i class="bi bi-clock"></i><span>Senin - Jumat, 08.00 - 15.00 WIB</span></div>
-                <div class="line"><i class="bi bi-envelope"></i><a href="mailto:info@bumdesmatarub.id">info@bumdesmatarub.id</a></div>
-                <div class="line"><i class="bi bi-whatsapp"></i><a href="https://wa.me/6281234567890">+62 812-3456-7890</a></div>
+                <div class="line">
+                    <i class="bi bi-geo-alt">
+                    </i>
+                    <span>Tarub, Kabupaten Tegal, Jawa Tengah</span>
+                </div>
+                <div class="line">
+                    <i class="bi bi-clock">
+                    </i>
+                    <span>Senin - Jumat, 08.00 - 15.00 WIB</span>
+                </div>
+                <div class="line">
+                    <i class="bi bi-envelope">
+                    </i>
+                    <a href="mailto:info@bumdesmatarub.id">info@bumdesmatarub.id</a>
+                </div>
+                <div class="line">
+                    <i class="bi bi-whatsapp">
+                    </i>
+                    <a href="https://wa.me/6281234567890">+62 812-3456-7890</a>
+                </div>
             </div>
     </section>
-    <footer><div class="wrap"><span>© <span id="yr">2026</span> BUMDESMA LKD TARUB. All Rights Reserved.</span><span>Media informasi resmi BUMDESMA LKD TARUB</span></div></footer>
+    <footer>
+        <div class="wrap">
+            <span>© <span id="yr">2026</span> BUMDESMA LKD TARUB. All Rights Reserved.</span>
+            <span>Media informasi resmi BUMDESMA LKD TARUB</span>
+        </div>
+    </footer>
     <script>document.getElementById('yr').textContent = new Date().getFullYear();(function(){var t=document.getElementById('navToggle'),l=document.getElementById('navLinks');if(!t||!l)return;t.addEventListener('click',function(){var o=l.classList.toggle('open');t.setAttribute('aria-expanded',o?'true':'false')});l.addEventListener('click',function(e){if(e.target.closest('a')){l.classList.remove('open');t.setAttribute('aria-expanded','false')}})})();(function(){var els=document.querySelectorAll('.reveal');if(!els.length)return;if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(function(el){el.classList.add('visible')});return}var io=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');io.unobserve(en.target)}})},{threshold:.12});els.forEach(function(el){io.observe(el)})})();</script>
 </body>
 </html>

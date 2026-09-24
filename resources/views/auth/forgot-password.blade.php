@@ -18,23 +18,56 @@
 	<main class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
 		<div class="auth-card bg-white p-4 p-md-5 w-100" style="max-width: 480px;">
 			<div class="text-center mb-4">
-				<span class="auth-icon mb-3"><i class="bi bi-envelope-lock"></i></span>
+				<span class="auth-icon mb-3">
+				    <i class="bi bi-envelope-lock">
+				    </i>
+				</span>
 				<h1 class="h4 fw-bold mb-1">Lupa password?</h1>
-				<p class="text-secondary small mb-0">Masukkan email akun Anda. Kami akan mengirimkan link untuk membuat password baru.</p>
+				<p
+				    class="text-secondary small mb-0">Masukkan
+				    email
+				    akun
+				    Anda.
+				    Kami
+				    akan
+				    mengirimkan
+				    link
+				    untuk
+				    membuat
+				    password
+				    baru.</p>
 			</div>
 			@if(session('success'))
-				<div class="alert alert-success small" role="alert"><i class="bi bi-check-circle me-1"></i>{{ session('success') }}</div>
+				<div class="alert alert-success small" role="alert">
+				    <i class="bi bi-check-circle me-1">
+				    </i>
+				    {{ session('success') }}
+				</div>
 			@endif
 			<form method="POST" action="{{ route('password.email') }}">
 				@csrf
 				<div class="mb-3">
 					<label class="form-label fw-semibold small" for="email">Email</label>
-					<input class="form-control form-control-lg @error('email') is-invalid @enderror" id="email" name="email" type="email" placeholder="nama@bumdesma.test" value="{{ old('email') }}" required autofocus>
+					<input
+					    class="form-control form-control-lg @error('email') is-invalid @enderror"
+					    id="email"
+					    name="email"
+					    type="email"
+					    placeholder="nama@bumdesma.test"
+					    value="{{ old('email') }}"
+					    required
+					    autofocus>
 					@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
 				</div>
-				<button class="btn btn-primary btn-lg w-100" type="submit"><i class="bi bi-send me-2"></i>Kirim Link Reset</button>
+				<button class="btn btn-primary btn-lg w-100" type="submit">
+				    <i class="bi bi-send me-2">
+				    </i>Kirim Link Reset</button>
 			</form>
-			<p class="text-center small mt-4 mb-0"><a class="text-decoration-none" href="{{ route('login') }}"><i class="bi bi-arrow-left me-1"></i>Kembali ke halaman login</a></p>
+			<p class="text-center small mt-4 mb-0">
+			    <a class="text-decoration-none" href="{{ route('login') }}">
+			        <i class="bi bi-arrow-left me-1">
+			        </i>Kembali ke halaman login</a>
+			</p>
 		</div>
 	</main>
 </body>

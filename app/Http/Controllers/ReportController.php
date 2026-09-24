@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ReportExport;
+use App\Exports\ReportSheet;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\Models\Payroll;
 use App\Models\Punishment;
 use App\Models\Reward;
+use App\Models\VisitAttendance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -70,18 +72,24 @@ class ReportController extends Controller
         $filters = $this->filters($request);
         $data = $this->reportData($filters);
 
-        return Excel::download(new ReportExport($data['exportRows'], $data['exportHeadings']), 'laporan-'.$filters['type'].'-'.$filters['year'].'-'.$filters['month'].'.xlsx');
+        return Excel::download(new ReportExport($data['exportSheets']), 'laporan-'.$filters['type'].'-'.$filters['year'].'-'.$filters['month'].'.xlsx');
     }
 
     private function filters(Request $request): array
     {
         $data = $request->validate([
-            'type' => ['nullable', 'in:all,attendance,leaves,payroll,reward-punishment,employees'],
+            'type' => ['nullable', 'in:all,attendance,leaves,payroll,reward-punishment,employees,visits'],
             'employee_id' => ['nullable', 'integer', 'exists:employees,id'],
             'month' => ['nullable', 'integer', 'between:1,12'],
             'year' => ['nullable', 'integer', 'min:2020', 'max:2100'],
             'status' => ['nullable', 'string', 'max:30'],
         ]);
+        // Karyawan hanya boleh melihat + mengunduh laporannya sendiri.
+        if (! $request->user()->isAdmin()) {
+            $employee = $request->user()->employee;
+            abort_unless($employee?->id, 403, 'Akun karyawan belum terhubung.');
+            $data['employee_id'] = $employee->id;
+        }
         $data['type'] = $data['type'] ?? 'all';
         $data['month'] = (int) ($data['month'] ?? now()->month);
         $data['year'] = (int) ($data['year'] ?? now()->year);
@@ -106,11 +114,12 @@ class ReportController extends Controller
         $payrolls = Payroll::with('employee.user')->whereIn('employee_id', $employeeIds)->whereDate('period_start', $filters['start'])->whereDate('period_end', $filters['end'])->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))->get();
         $rewards = Reward::with('employee.user')->whereIn('employee_id', $employeeIds)->whereBetween('awarded_at', [$filters['start'], $filters['end']])->get();
         $punishments = Punishment::with('employee.user')->whereIn('employee_id', $employeeIds)->whereBetween('issued_at', [$filters['start'], $filters['end']])->get();
+        $visits = VisitAttendance::with('employee.user')->whereIn('employee_id', $employeeIds)->whereBetween('visit_date', [$filters['start'], $filters['end']])->latest('visit_date')->latest('id')->get();
         $attendanceSummary = $this->attendanceSummary($employees, $attendances, $filters);
         $payrollSummary = ['total' => $payrolls->sum('basic_salary'), 'reward' => $payrolls->sum('reward_total'), 'deduction' => $payrolls->sum(fn ($item) => $item->late_deduction + $item->absence_deduction + $item->punishment_total), 'net' => $payrolls->sum('net_salary')];
-        $export = $this->exportRows($filters, $attendanceSummary, $leaves, $payrolls, $rewards, $punishments, $employees);
+        $exportSheets = $this->exportSheets($filters, $attendanceSummary, $leaves, $payrolls, $rewards, $punishments, $employees, $visits);
 
-        return compact('employees', 'attendances', 'leaves', 'payrolls', 'rewards', 'punishments', 'attendanceSummary', 'payrollSummary') + ['exportRows' => $export['rows'], 'exportHeadings' => $export['headings']];
+        return compact('employees', 'attendances', 'leaves', 'payrolls', 'rewards', 'punishments', 'visits', 'attendanceSummary', 'payrollSummary', 'exportSheets');
     }
 
     private function attendanceSummary($employees, $attendances, array $filters)
@@ -138,22 +147,90 @@ class ReportController extends Controller
         return $days;
     }
 
-    private function exportRows(array $filters, $summary, $leaves, $payrolls, $rewards, $punishments, $employees): array
+    private function exportSheets(array $filters, $summary, $leaves, $payrolls, $rewards, $punishments, $employees, $visits): array
     {
         $type = $filters['type'];
-        if ($type === 'attendance') {
-            return ['headings' => ['ID Karyawan', 'Nama', 'Jabatan', 'Hadir', 'Terlambat', 'Izin', 'Cuti', 'Total Hari', 'Persentase'], 'rows' => $summary->map(fn ($item) => [$item['employee']->employee_code, $item['employee']->display_name, $item['employee']->position?->name, $item['present'], $item['late'], $item['permission'], $item['leave'], $item['total'], $item['percentage'].'%'])->all()];
-        }
-        if ($type === 'leaves') {
-            return ['headings' => ['ID Karyawan', 'Nama', 'Jenis', 'Mulai', 'Selesai', 'Durasi', 'Status'], 'rows' => $leaves->map(fn ($item) => [$item->employee?->employee_code, $item->employee?->user?->name, $item->type, $item->start_date->format('d/m/Y'), $item->end_date->format('d/m/Y'), $item->total_days, $item->status])->all()];
-        }
-        if ($type === 'payroll') {
-            return ['headings' => ['ID Karyawan', 'Nama', 'Periode', 'Gaji Pokok', 'Reward', 'Potongan', 'Gaji Bersih', 'Status'], 'rows' => $payrolls->map(fn ($item) => [$item->employee?->employee_code, $item->employee?->user?->name, $item->period_start->format('m/Y'), $item->basic_salary, $item->reward_total, $item->late_deduction + $item->absence_deduction + $item->punishment_total, $item->net_salary, $item->status])->all()];
-        }
-        if ($type === 'reward-punishment') {
-            return ['headings' => ['Nama', 'Jenis', 'Keterangan', 'Nilai', 'Tanggal'], 'rows' => $rewards->map(fn ($item) => [$item->employee?->user?->name, 'Reward', $item->title, $item->amount, $item->awarded_at->format('d/m/Y')])->concat($punishments->map(fn ($item) => [$item->employee?->user?->name, 'Punishment', $item->title, $item->type === 'points_deduction' && $item->points > 0 ? $item->points.' poin' : $item->amount, $item->issued_at->format('d/m/Y')]))->all()];
+        $period = $filters['start']->translatedFormat('F Y');
+        $sheet = fn (string $title, string $report, array $headings, array $rows, array $formats = [], string $accent = '1E5AA8', ?array $footer = null, ?string $percentCol = null) => new ReportSheet($title, $report, $period, $headings, $rows, $formats, $accent, $footer, $percentCol);
+
+        $sheets = [
+            'attendance' => fn () => $sheet('Kehadiran', 'Laporan Kehadiran',
+                ['No', 'ID Karyawan', 'Nama', 'Jabatan', 'Hadir', 'Terlambat', 'Izin', 'Cuti', 'Total Hari', 'Persentase'],
+                $summary->values()->map(fn ($item, $i) => [
+                    $i + 1, $item['employee']->employee_code, $item['employee']->display_name,
+                    $item['employee']->position?->name ?? '-', $item['present'], $item['late'],
+                    $item['permission'], $item['leave'], $item['total'],
+                    $item['total'] ? round($item['present'] / $item['total'], 3) : 0,
+                ])->all(),
+                ['J' => '0.0%'], '1E5AA8', null, 'J'),
+            'leaves' => fn () => $sheet('Cuti & Izin', 'Laporan Cuti & Izin',
+                ['No', 'ID Karyawan', 'Nama', 'Jenis', 'Mulai', 'Selesai', 'Durasi', 'Status'],
+                $leaves->values()->map(fn ($item, $i) => [
+                    $i + 1, $item->employee?->employee_code, $item->employee?->user?->name,
+                    $item->type === 'sick' ? 'Sakit' : 'Cuti',
+                    $item->start_date->format('d/m/Y'), $item->end_date->format('d/m/Y'),
+                    $item->total_days.' hari', $this->leaveStatusLabel($item->status),
+                ])->all(),
+                [], '0E7C86'),
+            'payroll' => fn () => $sheet('Penggajian', 'Laporan Penggajian',
+                ['No', 'ID Karyawan', 'Nama', 'Periode', 'Gaji Pokok', 'Reward', 'Potongan', 'Gaji Bersih', 'Status'],
+                $payrolls->values()->map(fn ($item, $i) => [
+                    $i + 1, $item->employee?->employee_code, $item->employee?->user?->name,
+                    $item->period_start->format('m/Y'), $item->basic_salary, $item->reward_total,
+                    $item->late_deduction + $item->absence_deduction + $item->punishment_total,
+                    $item->net_salary, $this->payrollStatusLabel($item->status),
+                ])->all(),
+                ['E' => '"Rp" #,##0', 'F' => '"Rp" #,##0', 'G' => '"Rp" #,##0', 'H' => '"Rp" #,##0'],
+                '15803D',
+                ['', '', '', 'TOTAL', $payrolls->sum('basic_salary'), $payrolls->sum('reward_total'),
+                    $payrolls->sum(fn ($item) => $item->late_deduction + $item->absence_deduction + $item->punishment_total),
+                    $payrolls->sum('net_salary'), '']),
+            'reward-punishment' => fn () => $sheet('Reward & Punishment', 'Laporan Reward & Punishment',
+                ['No', 'Nama', 'Jenis', 'Keterangan', 'Nilai', 'Tanggal'],
+                $rewards->map(fn ($item) => [$item->employee?->user?->name, 'Reward', $item->title, 'Rp '.number_format($item->amount, 0, ',', '.'), $item->awarded_at->format('d/m/Y')])
+                    ->concat($punishments->map(fn ($item) => [$item->employee?->user?->name, 'Punishment', $item->title, $item->type === 'points_deduction' && $item->points > 0 ? $item->points.' poin' : 'Rp '.number_format($item->amount, 0, ',', '.'), $item->issued_at->format('d/m/Y')]))
+                    ->values()->map(fn ($row, $i) => [$i + 1, ...$row])->all(),
+                [], 'B45309'),
+            'employees' => fn () => $sheet('Data Karyawan', 'Laporan Data Karyawan',
+                ['No', 'ID Karyawan', 'Nama', 'Jabatan', 'Tanggal Bergabung', 'Status'],
+                $employees->values()->map(fn ($item, $i) => [
+                    $i + 1, $item->employee_code, $item->display_name, $item->position?->name ?? '-',
+                    $item->joined_at?->format('d/m/Y') ?? '-', $item->is_active ? 'Aktif' : 'Nonaktif',
+                ])->all(),
+                [], '475569'),
+            'visits' => fn () => $sheet('Kunjungan', 'Laporan Kunjungan',
+                ['No', 'ID Karyawan', 'Nama', 'Judul Kunjungan', 'Deskripsi', 'Tanggal', 'Koordinat'],
+                $visits->values()->map(fn ($item, $i) => [
+                    $i + 1, $item->employee?->employee_code, $item->employee?->user?->name,
+                    $item->title, $item->description ?: '-', $item->visit_date->format('d/m/Y'),
+                    ! empty($filters['employee_id']) && $item->latitude && $item->longitude
+                        ? number_format($item->latitude, 5).', '.number_format($item->longitude, 5) : '-',
+                ])->all(),
+                [], '7C3AED'),
+        ];
+
+        if ($type === 'all') {
+            return array_map(fn ($build) => $build(), array_values($sheets));
         }
 
-        return ['headings' => ['ID Karyawan', 'Nama', 'Jabatan', 'Tanggal Bergabung', 'Status'], 'rows' => $employees->map(fn ($item) => [$item->employee_code, $item->display_name, $item->position?->name, $item->joined_at?->format('d/m/Y'), $item->is_active ? 'Aktif' : 'Nonaktif'])->all()];
+        return isset($sheets[$type]) ? [$sheets[$type]()] : [$sheets['attendance']()];
+    }
+
+    private function leaveStatusLabel(?string $status): string
+    {
+        return match ($status) {
+            'approved' => 'Disetujui',
+            'rejected' => 'Ditolak',
+            default => 'Menunggu',
+        };
+    }
+
+    private function payrollStatusLabel(?string $status): string
+    {
+        return match ($status) {
+            'paid' => 'Dibayar',
+            'verified' => 'Diverifikasi',
+            default => 'Draft',
+        };
     }
 }

@@ -2,52 +2,140 @@
 @php($captureOffice = \App\Models\AttendanceLocation::active())
 @foreach([['in', 'Masuk', 'masuk', route('attendance.check-in', [], false)], ['out', 'Pulang', 'pulang', route('attendance.check-out', [], false)]] as [$suffix, $label, $type, $url])
 @php($modalOffice = $captureOffice ? ['name' => $captureOffice->name, 'lat' => (float) $captureOffice->latitude, 'lng' => (float) $captureOffice->longitude, 'radius' => (int) $captureOffice->radius_meters, 'enforce' => $suffix === 'out' ? (bool) $captureOffice->enforce_checkout_radius : (bool) $captureOffice->enforce_radius] : null)
-<div class="modal fade" id="check{{ ucfirst($suffix) }}Modal" tabindex="-1" data-url="{{ $url }}" data-type="{{ $type }}" data-office='@json($modalOffice)'>
+<div
+    class="modal fade"
+    id="check{{ ucfirst($suffix) }}Modal"
+    tabindex="-1"
+    data-url="{{ $url }}"
+    data-type="{{ $type }}"
+    data-office='@json($modalOffice)'>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title"><i class="bi bi-camera me-2"></i>Absen {{ $label }}</h5><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Tutup"></button></div>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-camera me-2">
+                    </i>Absen {{ $label }}
+                </h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Tutup">
+                </button>
+            </div>
             <div class="modal-body">
-                <div class="alert alert-danger d-none" data-role="error"></div>
+                <div class="alert alert-danger d-none" data-role="error">
+                </div>
                 <div data-role="step-camera">
-                    <video data-role="video" class="w-100 rounded-3 bg-dark" style="max-height:320px;object-fit:cover" playsinline muted></video>
-                    <canvas data-role="canvas" class="d-none"></canvas>
-                    <div class="text-center small py-3" data-role="camera-hint"><span class="text-secondary">Menyiapkan kamera...</span></div>
+                    <video
+                        data-role="video"
+                        class="w-100 rounded-3 bg-dark"
+                        style="max-height:320px;object-fit:cover"
+                        playsinline
+                        muted>
+                    </video>
+                    <canvas data-role="canvas" class="d-none">
+                    </canvas>
+                    <div class="text-center small py-3" data-role="camera-hint">
+                        <span class="text-secondary">Menyiapkan kamera...</span>
+                    </div>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary btn-lg" type="button" data-role="btn-capture" disabled><i class="bi bi-camera me-2"></i>AMBIL FOTO</button>
-                        <button class="btn btn-outline-secondary" type="button" data-role="btn-start"><i class="bi bi-arrow-clockwise me-2"></i>Coba Lagi Kamera</button>
-                        <div class="form-text text-center">Foto wajib diambil langsung dari kamera — tidak dapat upload file.</div>
+                        <button class="btn btn-primary btn-lg" type="button" data-role="btn-capture" disabled>
+                            <i class="bi bi-camera me-2">
+                            </i>AMBIL FOTO</button>
+                        <button class="btn btn-outline-secondary" type="button" data-role="btn-start">
+                            <i class="bi bi-arrow-clockwise me-2">
+                            </i>Coba Lagi Kamera</button>
+                        <div
+                            class="form-text text-center">Foto
+                            wajib
+                            diambil
+                            langsung
+                            dari
+                            kamera
+                            —
+                            tidak
+                            dapat
+                            upload
+                            file.</div>
                     </div>
                 </div>
                 <div class="d-none" data-role="step-preview">
-                    <img data-role="preview" class="img-fluid rounded-3 border w-100 mb-3" style="max-height:300px;object-fit:cover" alt="Preview foto absensi">
+                    <img
+                        data-role="preview"
+                        class="img-fluid rounded-3 border w-100 mb-3"
+                        style="max-height:300px;object-fit:cover"
+                        alt="Preview foto absensi">
                     <div class="p-3 rounded-3 bg-light small" data-role="gps-box">
-                        <div data-role="gps-status"><span class="spinner-border spinner-border-sm me-2"></span>Sedang mendapatkan lokasi...</div>
-                        <div class="text-secondary mt-1" data-role="gps-detail"></div>
-                        <div class="form-text">Akurasi membaik setelah beberapa detik — tekan tombol di bawah untuk memuat ulang.</div>
-                        <button class="btn btn-sm btn-outline-primary mt-2" type="button" data-role="btn-gps"><i class="bi bi-crosshair me-1"></i>Perbarui Lokasi</button>
+                        <div data-role="gps-status">
+                            <span class="spinner-border spinner-border-sm me-2">
+                            </span>Sedang mendapatkan lokasi...</div>
+                        <div class="text-secondary mt-1" data-role="gps-detail">
+                        </div>
+                        <div
+                            class="form-text">Akurasi
+                            membaik
+                            setelah
+                            beberapa
+                            detik
+                            —
+                            tekan
+                            tombol
+                            di
+                            bawah
+                            untuk
+                            memuat
+                            ulang.</div>
+                        <button class="btn btn-sm btn-outline-primary mt-2" type="button" data-role="btn-gps">
+                            <i class="bi bi-crosshair me-1">
+                            </i>Perbarui Lokasi</button>
                     </div>
-                    <div class="form-text mt-2"><i class="bi bi-clock me-1"></i>Waktu absensi dicatat otomatis oleh server (WIB).</div>
+                    <div class="form-text mt-2">
+                        <i class="bi bi-clock me-1">
+                        </i>Waktu absensi dicatat otomatis oleh server (WIB).</div>
                     <div class="d-flex gap-2 mt-3">
-                        <button class="btn btn-light border flex-fill" type="button" data-role="btn-retake"><i class="bi bi-arrow-counterclockwise me-2"></i>Ambil Ulang</button>
-                        <button class="btn btn-success flex-fill" type="button" data-role="btn-confirm"><i class="bi bi-check-circle me-2"></i>KONFIRMASI ABSENSI</button>
+                        <button class="btn btn-light border flex-fill" type="button" data-role="btn-retake">
+                            <i class="bi bi-arrow-counterclockwise me-2">
+                            </i>Ambil Ulang</button>
+                        <button class="btn btn-success flex-fill" type="button" data-role="btn-confirm">
+                            <i class="bi bi-check-circle me-2">
+                            </i>KONFIRMASI ABSENSI</button>
                     </div>
                 </div>
                 <div class="d-none text-center" data-role="step-done">
-                    <div class="display-4 text-success mb-2"><i class="bi bi-check-circle-fill"></i></div>
+                    <div class="display-4 text-success mb-2">
+                        <i class="bi bi-check-circle-fill">
+                        </i>
+                    </div>
                     <h5 class="fw-bold">ABSENSI BERHASIL</h5>
-                    <img data-role="done-photo" class="img-fluid rounded-3 border my-3" style="max-height:220px;object-fit:cover" alt="Bukti foto absensi">
+                    <img
+                        data-role="done-photo"
+                        class="img-fluid rounded-3 border my-3"
+                        style="max-height:220px;object-fit:cover"
+                        alt="Bukti foto absensi">
                     <dl class="row small text-start mb-3">
-                        <dt class="col-4 text-secondary">Jenis</dt><dd class="col-8" data-role="done-type">-</dd>
-                        <dt class="col-4 text-secondary">Tanggal</dt><dd class="col-8" data-role="done-date">-</dd>
-                        <dt class="col-4 text-secondary">Waktu</dt><dd class="col-8" data-role="done-time">-</dd>
-                        <dt class="col-4 text-secondary">Lokasi</dt><dd class="col-8" data-role="done-location">-</dd>
-                        <dt class="col-4 text-secondary">Koordinat</dt><dd class="col-8" data-role="done-coords">-</dd>
-                        <dt class="col-4 text-secondary">Akurasi</dt><dd class="col-8" data-role="done-accuracy">-</dd>
-                        <dt class="col-4 text-secondary">Status</dt><dd class="col-8" data-role="done-status">-</dd>
+                        <dt class="col-4 text-secondary">Jenis</dt>
+                        <dd class="col-8" data-role="done-type">-</dd>
+                        <dt class="col-4 text-secondary">Tanggal</dt>
+                        <dd class="col-8" data-role="done-date">-</dd>
+                        <dt class="col-4 text-secondary">Waktu</dt>
+                        <dd class="col-8" data-role="done-time">-</dd>
+                        <dt class="col-4 text-secondary">Lokasi</dt>
+                        <dd class="col-8" data-role="done-location">-</dd>
+                        <dt class="col-4 text-secondary">Koordinat</dt>
+                        <dd class="col-8" data-role="done-coords">-</dd>
+                        <dt class="col-4 text-secondary">Akurasi</dt>
+                        <dd class="col-8" data-role="done-accuracy">-</dd>
+                        <dt class="col-4 text-secondary">Status</dt>
+                        <dd class="col-8" data-role="done-status">-</dd>
                     </dl>
                     <div class="d-grid gap-2">
-                        <a class="btn btn-outline-primary" data-role="done-link" href="#"><i class="bi bi-eye me-2"></i>Lihat Detail</a>
-                        <button class="btn btn-primary" type="button" data-role="btn-reload">Tutup &amp; Muat Ulang</button>
+                        <a class="btn btn-outline-primary" data-role="done-link" href="#">
+                            <i class="bi bi-eye me-2">
+                            </i>Lihat Detail</a>
+                        <button
+                            class="btn btn-primary"
+                            type="button"
+                            data-role="btn-reload">Tutup
+                            &amp;
+                            Muat
+                            Ulang</button>
                     </div>
                 </div>
             </div>

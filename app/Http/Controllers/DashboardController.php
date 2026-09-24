@@ -26,8 +26,9 @@ class DashboardController extends Controller
             'presentCount' => $employee?->attendances()->whereBetween('attendance_date', [$monthStart, $today])->whereIn('status', ['present', 'late'])->count() ?? 0,
             'lateCount' => $employee?->attendances()->whereBetween('attendance_date', [$monthStart, $today])->where('status', 'late')->count() ?? 0,
             'leaveCount' => $employee?->leaveRequests()->whereMonth('start_date', $today->month)->where('status', 'approved')->count() ?? 0,
-            'visitCount' => $employee?->visitAttendances()->whereBetween('visit_date', [$monthStart->toDateString(), $today->toDateString()])->count() ?? 0,
-            'visitMax' => VisitAttendance::MAX_PER_MONTH,
+            'visitCount' => auth()->user()->isAdmin()
+                ? VisitAttendance::whereDate('visit_date', $today->toDateString())->count()
+                : ($employee?->visitAttendances()->whereDate('visit_date', $today->toDateString())->count() ?? 0),
             'adminStats' => auth()->user()->isAdmin() ? [
                 'employees' => Employee::where('is_active', true)->count(),
                 'present' => Attendance::whereDate('attendance_date', $today)->whereIn('status', ['present', 'late'])->count(),

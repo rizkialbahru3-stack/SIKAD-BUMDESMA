@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VisitAttendance extends Model
 {
-    public const MAX_PER_MONTH = 10;
+    public const MAX_PER_DAY = 10;
 
-    protected $fillable = ['employee_id', 'title', 'photo', 'visit_date'];
+    protected $fillable = ['employee_id', 'title', 'description', 'photo', 'visit_date', 'latitude', 'longitude', 'accuracy'];
 
-    protected $casts = ['visit_date' => 'date'];
+    protected $casts = ['visit_date' => 'date', 'latitude' => 'decimal:7', 'longitude' => 'decimal:7'];
 
     public function employee(): BelongsTo
     {

@@ -3,9 +3,15 @@
 @section('content')
     <div class="mb-4">
         @if (auth()->user()->isAdmin())
-            <a class="text-decoration-none" href="{{ route('employees.index') }}"><i class="bi bi-arrow-left me-2"></i>Kembali
-            ke Data Karyawan</a>@else<a class="text-decoration-none" href="{{ route('dashboard') }}"><i
-                    class="bi bi-arrow-left me-2"></i>Kembali ke Dashboard</a>
+            <a class="text-decoration-none" href="{{ route('employees.index') }}">
+                <i class="bi bi-arrow-left me-2">
+                </i>Kembali
+            ke Data Karyawan</a>
+            @else
+            <a class="text-decoration-none" href="{{ route('dashboard') }}">
+                <i
+                    class="bi bi-arrow-left me-2">
+                    </i>Kembali ke Dashboard</a>
         @endif
     </div>
     <div class="card border-0 shadow-sm overflow-hidden">
@@ -15,7 +21,11 @@
                     <div class="employee-avatar mx-auto mb-3">
                         @if ($employee->photo)
                             <img src="{{ asset('storage/' . $employee->photo) }}"
-                            alt="Foto {{ $employee->display_name }}">@else<span>{{ strtoupper(substr($employee->display_name, 0, 1)) }}</span>
+                            alt="Foto {{ $employee->display_name }}">
+                            @else
+                            <span>
+                                {{ strtoupper(substr($employee->display_name, 0, 1)) }}
+                            </span>
                         @endif
                     </div>
                     <h1 class="h4 mb-1">{{ $employee->display_name }}</h1>
@@ -27,26 +37,56 @@
                     <div>
                         <p class="text-uppercase text-primary small fw-bold mb-2">Detail karyawan</p>
                         <h2 class="h3 mb-0">Informasi profil</h2>
-                    </div><span
-                        class="badge text-bg-{{ $employee->is_active ? 'success' : 'secondary' }}">{{ $employee->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                    </div>
+                    <span
+                        class="badge text-bg-{{ $employee->is_active ? 'success' : 'secondary' }}">
+                        {{ $employee->is_active ? 'Aktif' : 'Nonaktif' }}
+                        </span>
                 </div>
                 <div class="row g-4">
-                    <div class="col-sm-6"><small class="text-secondary d-block">ID
-                            Karyawan</small><strong>{{ $employee->employee_code }}</strong></div>
-                    <div class="col-sm-6"><small class="text-secondary d-block">Tanggal
-                            Bergabung</small><strong>{{ $employee->joined_at?->format('d F Y') ?? '-' }}</strong></div>
-                    <div class="col-sm-6"><small
-                            class="text-secondary d-block">Email</small><strong>{{ $employee->display_email ?? '-' }}</strong>
+                    <div class="col-sm-6">
+                        <small class="text-secondary d-block">ID
+                            Karyawan</small>
+                            <strong>
+                                {{ $employee->employee_code }}
+                            </strong>
+                            </div>
+                    <div class="col-sm-6">
+                        <small class="text-secondary d-block">Tanggal
+                            Bergabung</small>
+                            <strong>
+                                {{ $employee->joined_at?->format('d F Y') ?? '-' }}
+                            </strong>
+                            </div>
+                    <div class="col-sm-6">
+                        <small
+                            class="text-secondary d-block">Email</small>
+                            <strong>
+                                {{ $employee->display_email ?? '-' }}
+                            </strong>
                     </div>
-                    <div class="col-sm-6"><small class="text-secondary d-block">Nomor
-                            Telepon</small><strong>{{ $employee->phone ?: '-' }}</strong></div>
-                    <div class="col-sm-6"><small class="text-secondary d-block">Jadwal
-                            Kerja</small><strong>{{ $employee->workSchedule?->name ?? '-' }}</strong></div>
+                    <div class="col-sm-6">
+                        <small class="text-secondary d-block">Nomor
+                            Telepon</small>
+                            <strong>
+                                {{ $employee->phone ?: '-' }}
+                            </strong>
+                            </div>
+                    <div class="col-sm-6">
+                        <small class="text-secondary d-block">Jadwal
+                            Kerja</small>
+                            <strong>
+                                {{ $employee->workSchedule?->name ?? '-' }}
+                            </strong>
+                            </div>
                 </div>
                 <div class="d-flex flex-wrap gap-2 mt-5">
                     @if (auth()->user()->isAdmin())
-                        <a class="btn btn-primary" href="{{ route('employees.edit', $employee) }}"><i
-                                class="bi bi-pencil me-2"></i>Edit Data</a><a class="btn btn-light border"
+                        <a class="btn btn-primary" href="{{ route('employees.edit', $employee) }}">
+                            <i
+                                class="bi bi-pencil me-2">
+                                </i>Edit Data</a>
+                                <a class="btn btn-light border"
                         href="{{ route('employees.index') }}">Kembali</a>@else<a class="btn btn-light border"
                             href="{{ route('dashboard') }}">Kembali</a>
                     @endif

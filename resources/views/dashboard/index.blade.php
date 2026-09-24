@@ -127,9 +127,13 @@
                             class="text-secondary">Keterlambatan</span><strong>{{ $lateCount }} kali</strong></div>
                     <div class="d-flex justify-content-between py-3 border-bottom"><span class="text-secondary">Cuti
                             disetujui</span><strong>{{ $leaveCount }} pengajuan</strong></div>
-                    <div class="d-flex justify-content-between py-3"><span class="text-secondary">Kunjungan</span><strong>{{ $visitCount ?? 0 }}/{{ $visitMax ?? 10 }}</strong></div><a
-                        href="{{ route('leave.index') }}" class="btn btn-outline-primary w-100 mt-3">Lihat cuti & izin</a><a
-                        href="{{ route('visits.index') }}" class="btn btn-primary w-100 mt-2">Catat kunjungan</a>
+                    <div class="d-flex justify-content-between py-3"><span class="text-secondary">Kunjungan hari ini{{ auth()->user()->isAdmin() ? ' (semua karyawan)' : '' }}</span><strong>{{ $visitCount ?? 0 }} kunjungan</strong></div><a
+                        href="{{ route('leave.index') }}" class="btn btn-outline-primary w-100 mt-3">Lihat cuti & izin</a>
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('visits.index') }}" class="btn btn-primary w-100 mt-2">Lihat kunjungan</a>
+                    @else
+                        <a href="{{ route('visits.index') }}" class="btn btn-primary w-100 mt-2">Catat kunjungan</a>
+                    @endif
                 </div>
             </div>
         </div>

@@ -9,7 +9,11 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         *{box-sizing:border-box}html{scroll-behavior:smooth;overflow-x:clip}body{margin:0;font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#fff;background:#2e4a75;overflow-x:clip}
         img{height:auto;max-width:100%}
@@ -103,24 +107,51 @@
 </head>
 <body>
     <div class="hero">
-        <span class="orb o1" aria-hidden="true"></span><span class="orb o2" aria-hidden="true"></span>
+        <span class="orb o1" aria-hidden="true">
+        </span>
+        <span class="orb o2" aria-hidden="true">
+        </span>
         <nav class="nav" aria-label="Navigasi utama">
             <a class="brand" href="{{ url('/') }}" aria-label="Kembali ke beranda">
                 <img src="{{ asset('images/logo-bumdesma.png') }}" alt="Logo BUMDESMA LKD TARUB">
-                <span>BUMDESMA<small>LKD TARUB</small></span>
+                <span>BUMDESMA<small>LKD TARUB</small>
+                </span>
             </a>
             <div class="nav-links" id="navLinks">
-                <a href="{{ url('/') }}">Beranda</a><a class="{{ in_array($pageKey, ['profil', 'tentang', 'profil-lkd']) ? 'active' : '' }}" href="{{ url('/profil') }}">Profil</a><a class="{{ $pageKey === 'kegiatan' ? 'active' : '' }}" href="{{ url('/kegiatan') }}">Kegiatan</a><a class="{{ $pageKey === 'program' ? 'active' : '' }}" href="{{ url('/program') }}">Program</a><a class="{{ $pageKey === 'potensi' ? 'active' : '' }}" href="{{ url('/potensi') }}">Potensi</a><a class="{{ $pageKey === 'berita' ? 'active' : '' }}" href="{{ url('/berita') }}">Berita</a><a class="{{ $pageKey === 'galeri' ? 'active' : '' }}" href="{{ url('/galeri') }}">Galeri</a><a class="{{ $pageKey === 'kontak' ? 'active' : '' }}" href="{{ url('/kontak') }}">Kontak</a><a class="login-link" href="{{ route('login') }}">Masuk →</a>
+                <a href="{{ url('/') }}">Beranda</a>
+                <a
+                    class="{{ in_array($pageKey, ['profil', 'tentang', 'profil-lkd']) ? 'active' : '' }}"
+                    href="{{ url('/profil') }}">Profil</a>
+                <a class="{{ $pageKey === 'kegiatan' ? 'active' : '' }}" href="{{ url('/kegiatan') }}">Kegiatan</a>
+                <a class="{{ $pageKey === 'program' ? 'active' : '' }}" href="{{ url('/program') }}">Program</a>
+                <a class="{{ $pageKey === 'potensi' ? 'active' : '' }}" href="{{ url('/potensi') }}">Potensi</a>
+                <a class="{{ $pageKey === 'berita' ? 'active' : '' }}" href="{{ url('/berita') }}">Berita</a>
+                <a class="{{ $pageKey === 'galeri' ? 'active' : '' }}" href="{{ url('/galeri') }}">Galeri</a>
+                <a class="{{ $pageKey === 'kontak' ? 'active' : '' }}" href="{{ url('/kontak') }}">Kontak</a>
+                <a class="login-link" href="{{ route('login') }}">Masuk →</a>
             </div>
             <a class="nav-cta" href="{{ route('login') }}">Masuk</a>
-            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks" id="navToggle"><i class="bi bi-list"></i><span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buka navigasi</span></button>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks" id="navToggle">
+                <i class="bi bi-list">
+                </i>
+                <span
+                    class="sr-only"
+                    style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buka
+                    navigasi</span>
+            </button>
         </nav>
         <div class="hero-body">
             <div>
                 <p class="eyebrow">{{ $page['label'] }}</p>
                 <h1 class="hero-title">{{ $page['title'] }}</h1>
                 <p class="hero-sub">{{ $page['intro'] ?? $page['excerpt'] }}</p>
-                <nav class="crumbs" aria-label="Navigasi halaman"><a href="{{ url('/') }}">Beranda</a><span>/</span><span>{{ $page['label'] }}</span></nav>
+                <nav class="crumbs" aria-label="Navigasi halaman">
+                    <a href="{{ url('/') }}">Beranda</a>
+                    <span>/</span>
+                    <span>
+                        {{ $page['label'] }}
+                    </span>
+                </nav>
                 <div class="btn-row">
                     <a class="btn primary" href="{{ url('/') }}">Kembali ke Beranda</a>
                     <a class="btn ghost" href="{{ url('/kontak') }}">Hubungi Kami</a>
@@ -139,7 +170,9 @@
             <div class="split">
                 <div>
                     <p class="eyebrow" style="color:#1e5aa8">BUMDESMA LKD TARUB</p>
-                    <h2>Ruang informasi<br><em>untuk semua.</em></h2>
+                    <h2>Ruang informasi<br>
+                        <em>untuk semua.</em>
+                    </h2>
                 </div>
                 <div class="copy">
                     <p>Website resmi ini menjadi pusat informasi, promosi, dan dokumentasi digital BUMDESMA LKD TARUB. Temukan cerita, program, dan potensi yang tumbuh dari masyarakat Tarub.</p>
@@ -150,12 +183,28 @@
                 <h3>Mengapa halaman ini penting?</h3>
                 <p>Tiga alasan ruang informasi ini dihadirkan untuk masyarakat.</p>
                 <div class="mini-grid">
-                    <div class="mini"><span class="mini-number">01</span><strong>Informasi terpercaya</strong><p>Kabar dan pengumuman BUMDESMA untuk masyarakat.</p></div>
-                    <div class="mini"><span class="mini-number">02</span><strong>Potensi lokal</strong><p>Ruang untuk memperkenalkan karya dan usaha warga.</p></div>
-                    <div class="mini"><span class="mini-number">03</span><strong>Kolaborasi terbuka</strong><p>Menghubungkan desa dengan mitra dan kesempatan baru.</p></div>
+                    <div class="mini">
+                        <span class="mini-number">01</span>
+                        <strong>Informasi terpercaya</strong>
+                        <p>Kabar dan pengumuman BUMDESMA untuk masyarakat.</p>
+                    </div>
+                    <div class="mini">
+                        <span class="mini-number">02</span>
+                        <strong>Potensi lokal</strong>
+                        <p>Ruang untuk memperkenalkan karya dan usaha warga.</p>
+                    </div>
+                    <div class="mini">
+                        <span class="mini-number">03</span>
+                        <strong>Kolaborasi terbuka</strong>
+                        <p>Menghubungkan desa dengan mitra dan kesempatan baru.</p>
+                    </div>
                 </div>
                 <div class="back-row">
-                    <a class="btn primary" style="border-color:#1e5aa8;background:#1e5aa8" href="{{ url('/') }}">Jelajahi Beranda</a>
+                    <a
+                        class="btn primary"
+                        style="border-color:#1e5aa8;background:#1e5aa8"
+                        href="{{ url('/') }}">Jelajahi
+                        Beranda</a>
                 </div>
             </div>
         </div>
@@ -165,16 +214,35 @@
             <div>
                 <h2>Kontak Kami</h2>
                 <p>Terbuka untuk informasi, kolaborasi, dan cerita baru dari masyarakat Tarub.</p>
-                <div class="line"><i class="bi bi-geo-alt"></i><span>Tarub, Kabupaten Tegal, Jawa Tengah</span></div>
-                <div class="line"><i class="bi bi-clock"></i><span>Senin - Jumat, 08.00 - 15.00 WIB</span></div>
-                <div class="line"><i class="bi bi-envelope"></i><a href="mailto:info@bumdesmatarub.id">info@bumdesmatarub.id</a></div>
+                <div class="line">
+                    <i class="bi bi-geo-alt">
+                    </i>
+                    <span>Tarub, Kabupaten Tegal, Jawa Tengah</span>
+                </div>
+                <div class="line">
+                    <i class="bi bi-clock">
+                    </i>
+                    <span>Senin - Jumat, 08.00 - 15.00 WIB</span>
+                </div>
+                <div class="line">
+                    <i class="bi bi-envelope">
+                    </i>
+                    <a href="mailto:info@bumdesmatarub.id">info@bumdesmatarub.id</a>
+                </div>
             </div>
         </div>
     </section>
     <footer>
         <div class="wrap">
             <span>© <span id="yr">2026</span> BUMDESMA LKD TARUB. All Rights Reserved.</span>
-            <span class="foot-links"><a href="{{ url('/profil') }}">Profil</a><a href="{{ url('/program') }}">Program</a><a href="{{ url('/kegiatan') }}">Kegiatan</a><a href="{{ url('/berita') }}">Berita</a><a href="{{ url('/galeri') }}">Galeri</a><a href="{{ url('/kontak') }}">Kontak</a></span>
+            <span class="foot-links">
+                <a href="{{ url('/profil') }}">Profil</a>
+                <a href="{{ url('/program') }}">Program</a>
+                <a href="{{ url('/kegiatan') }}">Kegiatan</a>
+                <a href="{{ url('/berita') }}">Berita</a>
+                <a href="{{ url('/galeri') }}">Galeri</a>
+                <a href="{{ url('/kontak') }}">Kontak</a>
+            </span>
         </div>
     </footer>
     <script>document.getElementById('yr').textContent = new Date().getFullYear();(function(){var t=document.getElementById('navToggle'),l=document.getElementById('navLinks');if(!t||!l)return;t.addEventListener('click',function(){var o=l.classList.toggle('open');t.setAttribute('aria-expanded',o?'true':'false')});l.addEventListener('click',function(e){if(e.target.closest('a')){l.classList.remove('open');t.setAttribute('aria-expanded','false')}})})();</script>

@@ -52,10 +52,29 @@ class VisitAttendanceController extends Controller
 
         $visits = $query->paginate(15)->withQueryString();
 
-        // Rekap: karyawan lihat kuotanya sendiri; admin lihat ringkasan per karyawan.
-        $myCount = 0;
+        // Lokasi bersifat per karyawan: admin hanya melihatnya saat filter satu karyawan dipilih.
+        $showLocation = ! $request->user()->isAdmin() || ! empty($filters['employee_id']);
+
+        // Titik peta sebaran: seluruh hasil filter yang berkoordinat (maks 200 titik).
+        $mapPoints = $showLocation ? (clone $query)->whereNotNull('latitude')->whereNotNull('longitude')
+            ->reorder()->latest('visit_date')->latest('id')->limit(200)->get()
+            ->map(fn (VisitAttendance $item) => [
+                'lat' => (float) $item->latitude,
+                'lng' => (float) $item->longitude,
+                'title' => $item->title,
+                'employee' => $item->employee?->user?->name ?? '-',
+                'date' => $item->visit_date->translatedFormat('d M Y'),
+                'url' => route('visits.show', $item),
+            ])->values() : collect();
+
+        // Rekap: hitungan kunjungan hari ini + total bulan berjalan.
+        $todayCount = 0;
+        $monthCount = 0;
         if ($employee) {
-            $myCount = VisitAttendance::where('employee_id', $employee->id)
+            $todayCount = VisitAttendance::where('employee_id', $employee->id)
+                ->whereDate('visit_date', today())
+                ->count();
+            $monthCount = VisitAttendance::where('employee_id', $employee->id)
                 ->whereBetween('visit_date', [$start->toDateString(), $end->toDateString()])
                 ->count();
         }
@@ -66,14 +85,14 @@ class VisitAttendanceController extends Controller
                 ->orderBy('employee_code')
                 ->get()
                 ->map(function (Employee $item) use ($start, $end) {
-                    $count = VisitAttendance::where('employee_id', $item->id)
-                        ->whereBetween('visit_date', [$start->toDateString(), $end->toDateString()])
-                        ->count();
-
                     return [
                         'employee' => $item,
-                        'count' => $count,
-                        'remaining' => max(0, VisitAttendance::MAX_PER_MONTH - $count),
+                        'today' => VisitAttendance::where('employee_id', $item->id)
+                            ->whereDate('visit_date', today())
+                            ->count(),
+                        'month' => VisitAttendance::where('employee_id', $item->id)
+                            ->whereBetween('visit_date', [$start->toDateString(), $end->toDateString()])
+                            ->count(),
                     ];
                 });
         }
@@ -83,9 +102,11 @@ class VisitAttendanceController extends Controller
             'visits' => $visits,
             'filters' => $filters + ['month' => $monthValue],
             'monthNav' => $monthNav,
-            'myCount' => $myCount,
-            'remaining' => max(0, VisitAttendance::MAX_PER_MONTH - $myCount),
-            'maxPerMonth' => VisitAttendance::MAX_PER_MONTH,
+            'todayCount' => $todayCount,
+            'monthCount' => $monthCount,
+            'maxPerDay' => VisitAttendance::MAX_PER_DAY,
+            'showLocation' => $showLocation,
+            'mapPoints' => $mapPoints,
             'summary' => $summary,
             'employees' => $request->user()->isAdmin() ? Employee::with('user')->where('is_active', true)->orderBy('employee_code')->get() : collect(),
         ]);
@@ -98,20 +119,23 @@ class VisitAttendanceController extends Controller
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
             'visit_date' => ['required', 'date', 'before_or_equal:today'],
             'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
+            'accuracy' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ]);
 
-        $visitMonth = Carbon::parse($data['visit_date']);
+        $visitDay = Carbon::parse($data['visit_date']);
         $count = VisitAttendance::where('employee_id', $employee->id)
-            ->whereYear('visit_date', $visitMonth->year)
-            ->whereMonth('visit_date', $visitMonth->month)
+            ->whereDate('visit_date', $visitDay->toDateString())
             ->count();
 
-        if ($count >= VisitAttendance::MAX_PER_MONTH) {
+        if ($count >= VisitAttendance::MAX_PER_DAY) {
             return back()
                 ->withInput()
-                ->with('error', 'Batas maksimal '.VisitAttendance::MAX_PER_MONTH.' kunjungan per bulan sudah tercapai ('.$visitMonth->translatedFormat('F Y').').');
+                ->with('error', 'Batas maksimal '.VisitAttendance::MAX_PER_DAY.' kunjungan per hari sudah tercapai ('.$visitDay->translatedFormat('d F Y').').');
         }
 
         $photo = $request->file('photo')->store('visit-attendances/'.now()->format('Y/m'), 'public');
@@ -119,11 +143,27 @@ class VisitAttendanceController extends Controller
         VisitAttendance::create([
             'employee_id' => $employee->id,
             'title' => $data['title'],
+            'description' => $data['description'] ?? null,
             'visit_date' => $data['visit_date'],
             'photo' => $photo,
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
+            'accuracy' => isset($data['accuracy']) ? (int) round($data['accuracy']) : null,
         ]);
 
-        return back()->with('success', 'Absen kunjungan berhasil dicatat ('.($count + 1).'/'.VisitAttendance::MAX_PER_MONTH.' bulan ini).');
+        return back()->with('success', 'Absen kunjungan berhasil dicatat.');
+    }
+
+    public function show(Request $request, VisitAttendance $visit)
+    {
+        if (! $request->user()->isAdmin()) {
+            abort_if($visit->employee_id !== $request->user()->employee?->id, 403, 'Anda tidak berhak melihat kunjungan ini.');
+        }
+
+        return view('visits.show', [
+            'title' => 'Detail Kunjungan',
+            'visit' => $visit->load('employee.user', 'employee.position'),
+        ]);
     }
 
     public function destroy(Request $request, VisitAttendance $visit)

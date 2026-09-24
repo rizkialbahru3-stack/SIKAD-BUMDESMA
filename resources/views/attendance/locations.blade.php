@@ -2,63 +2,233 @@
 
 @section('content')
 <div class="mb-4">
-    <a class="text-decoration-none" href="{{ route('attendance.index') }}"><i class="bi bi-arrow-left me-2"></i>Kembali ke Data Kehadiran</a>
+    <a class="text-decoration-none" href="{{ route('attendance.index') }}">
+        <i class="bi bi-arrow-left me-2">
+        </i>Kembali ke Data Kehadiran</a>
     <h1 class="h3 mt-3 mb-1">Lokasi Absensi</h1>
-    <p class="text-secondary mb-0">Tentukan titik kantor dan radius absensi. Karyawan wajib selfie + GPS dan hanya bisa absen di dalam radius (validasi di server).</p>
+    <p
+        class="text-secondary mb-0">Tentukan
+        titik
+        kantor
+        dan
+        radius
+        absensi.
+        Karyawan
+        wajib
+        selfie
+        +
+        GPS
+        dan
+        hanya
+        bisa
+        absen
+        di
+        dalam
+        radius
+        (validasi di server).</p>
 </div>
 
 @if(! $active)
-<div class="alert alert-warning d-flex align-items-center gap-2"><i class="bi bi-exclamation-triangle-fill"></i><span>Belum ada lokasi aktif — validasi radius <strong>nonaktif</strong> dan lokasi karyawan hanya dicatat. Tambahkan lokasi di bawah lalu aktifkan.</span></div>
+<div class="alert alert-warning d-flex align-items-center gap-2">
+    <i class="bi bi-exclamation-triangle-fill">
+    </i>
+    <span>Belum ada lokasi aktif — validasi radius <strong>nonaktif</strong> dan lokasi karyawan hanya dicatat. Tambahkan lokasi di bawah lalu aktifkan.</span>
+</div>
 @endif
 
 <div class="row g-4">
     <div class="col-lg-7">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-geo-alt me-2 text-primary"></i>Daftar Lokasi</h2></div>
-            <div class="table-responsive"><table class="table align-middle mb-0">
-                <thead class="table-light"><tr><th>Nama</th><th>Koordinat</th><th>Radius / Akurasi</th><th>Status</th><th class="text-end">Aksi</th></tr></thead>
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-geo-alt me-2 text-primary">
+                    </i>Daftar Lokasi</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nama</th>
+                        <th>Koordinat</th>
+                        <th>Radius / Akurasi</th>
+                        <th>Status</th>
+                        <th class="text-end">Aksi</th>
+                    </tr>
+                </thead>
                 <tbody>
                 @forelse($locations as $location)
                     <tr>
-                        <td><strong>{{ $location->name }}</strong>@if($location->address)<small class="d-block text-secondary">{{ $location->address }}</small>@endif @unless($location->enforce_radius)<span class="badge text-bg-warning">Radius masuk tidak ditegakkan</span>@endunless @unless($location->enforce_checkout_radius)<span class="badge text-bg-info">Pulang boleh dari lapangan</span>@endunless</td>
-                        <td class="small">{{ number_format($location->latitude, 6) }}, {{ number_format($location->longitude, 6) }}</td>
-                        <td class="small">{{ $location->radius_meters }} m / ±{{ $location->max_accuracy_meters }} m</td>
-                        <td>@if($location->is_active)<span class="badge text-bg-success">Aktif</span>@else<span class="badge text-bg-secondary">Nonaktif</span>@endif</td>
+                        <td>
+                            <strong>
+                                {{ $location->name }}
+                            </strong>@if($location->address)
+                                <small class="d-block text-secondary">
+                                    {{ $location->address }}
+                                </small>
+                            @endif @unless($location->enforce_radius)
+                                <span class="badge text-bg-warning">Radius masuk tidak ditegakkan</span>
+                            @endunless @unless($location->enforce_checkout_radius)
+                                <span class="badge text-bg-info">Pulang boleh dari lapangan</span>
+                            @endunless
+                        </td>
+                        <td class="small">
+                            {{ number_format($location->latitude, 6) }}, {{ number_format($location->longitude, 6) }}
+                        </td>
+                        <td class="small">
+                            {{ $location->radius_meters }} m / ±{{ $location->max_accuracy_meters }} m</td>
+                        <td>@if($location->is_active)
+                                <span class="badge text-bg-success">Aktif</span>
+                            @else
+                            <span class="badge text-bg-secondary">Nonaktif</span>
+                        @endif
+                        </td>
                         <td class="text-end text-nowrap">
                             @unless($location->is_active)
-                            <form class="d-inline" method="POST" action="{{ route('attendance.locations.activate', $location) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-success" type="submit" title="Aktifkan"><i class="bi bi-check-circle"></i></button></form>
+                            <form class="d-inline" method="POST" action="{{ route('attendance.locations.activate', $location) }}">@csrf @method('PATCH')
+                                <button class="btn btn-sm btn-outline-success" type="submit" title="Aktifkan">
+                                    <i class="bi bi-check-circle">
+                                    </i>
+                                </button>
+                            </form>
                             @endunless
-                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#editLocation-{{ $location->id }}" title="Ubah"><i class="bi bi-pencil"></i></button>
-                            <form class="d-inline" method="POST" action="{{ route('attendance.locations.destroy', $location) }}" data-confirm="Hapus lokasi {{ $location->name }}?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" title="Hapus"><i class="bi bi-trash"></i></button></form>
+                            <button
+                                class="btn btn-sm btn-outline-primary"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editLocation-{{ $location->id }}"
+                                title="Ubah">
+                            <i class="bi bi-pencil">
+                            </i>
+                            </button>
+                            <form class="d-inline" method="POST" action="{{ route('attendance.locations.destroy', $location) }}" data-confirm="Hapus lokasi {{ $location->name }}?">@csrf @method('DELETE')
+                                <button class="btn btn-sm btn-outline-danger" type="submit" title="Hapus">
+                                    <i class="bi bi-trash">
+                                    </i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="text-center text-secondary py-5"><i class="bi bi-geo-alt d-block fs-2 mb-2"></i>Belum ada lokasi absensi.</td></tr>
+                    <tr>
+                        <td colspan="5" class="text-center text-secondary py-5">
+                            <i class="bi bi-geo-alt d-block fs-2 mb-2">
+                            </i>Belum ada lokasi absensi.</td>
+                    </tr>
                 @endforelse
                 </tbody>
-            </table></div>
+            </table>
+            </div>
         </div>
     </div>
     <div class="col-lg-5">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3"><h2 class="h5 mb-0"><i class="bi bi-plus-circle me-2 text-primary"></i>Tambah Lokasi</h2></div>
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-plus-circle me-2 text-primary">
+                    </i>Tambah Lokasi</h2>
+            </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('attendance.locations.store') }}" id="locationForm">
                     @csrf
-                    <div class="mb-3"><label class="form-label" for="loc_name">Nama Lokasi</label><input class="form-control" id="loc_name" name="name" value="{{ old('name', 'Kantor BUMDESMA LKD TARUB') }}" required maxlength="100"></div>
-                    <div class="mb-3"><label class="form-label" for="loc_address">Alamat</label><input class="form-control" id="loc_address" name="address" value="{{ old('address') }}" maxlength="255" placeholder="cth. Jl. Raya Tarub, Tegal"></div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-6"><label class="form-label" for="loc_lat">Latitude</label><input class="form-control" id="loc_lat" name="latitude" value="{{ old('latitude') }}" required inputmode="decimal" placeholder="-6.xxxxxx"></div>
-                        <div class="col-6"><label class="form-label" for="loc_lng">Longitude</label><input class="form-control" id="loc_lng" name="longitude" value="{{ old('longitude') }}" required inputmode="decimal" placeholder="109.xxxxxx"></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="loc_name">Nama Lokasi</label>
+                        <input
+                            class="form-control"
+                            id="loc_name"
+                            name="name"
+                            value="{{ old('name', 'Kantor BUMDESMA LKD TARUB') }}"
+                            required
+                            maxlength="100">
                     </div>
-                    <button class="btn btn-outline-primary w-100 mb-3" type="button" id="useCurrentLocation"><i class="bi bi-crosshair me-2"></i>Gunakan Lokasi Saat Ini</button>
-                    <div class="row g-3 mb-3">
-                        <div class="col-6"><label class="form-label" for="loc_radius">Radius (meter)</label><input class="form-control" id="loc_radius" type="number" name="radius_meters" value="{{ old('radius_meters', 100) }}" min="10" max="5000" required></div>
-                        <div class="col-6"><label class="form-label" for="loc_acc">Batas Akurasi GPS (meter)</label><input class="form-control" id="loc_acc" type="number" name="max_accuracy_meters" value="{{ old('max_accuracy_meters', 100) }}" min="10" max="1000" required></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="loc_address">Alamat</label>
+                        <input
+                            class="form-control"
+                            id="loc_address"
+                            name="address"
+                            value="{{ old('address') }}"
+                            maxlength="255"
+                            placeholder="cth. Jl. Raya Tarub, Tegal">
                     </div>
-                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="loc_enforce" name="enforce_radius" value="1" checked><label class="form-check-label" for="loc_enforce">Tegakkan batas radius <strong>absen masuk</strong> (tolak absen di luar area)</label></div>
-                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="loc_enforce_out" name="enforce_checkout_radius" value="1"><label class="form-check-label" for="loc_enforce_out">Tegakkan batas radius <strong>absen pulang</strong> (matikan jika karyawan boleh pulang dari lapangan)</label></div>
-                    <button class="btn btn-primary w-100" type="submit"><i class="bi bi-save me-2"></i>Simpan &amp; Aktifkan Lokasi</button>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label" for="loc_lat">Latitude</label>
+                            <input
+                                class="form-control"
+                                id="loc_lat"
+                                name="latitude"
+                                value="{{ old('latitude') }}"
+                                required
+                                inputmode="decimal"
+                                placeholder="-6.xxxxxx">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="loc_lng">Longitude</label>
+                            <input
+                                class="form-control"
+                                id="loc_lng"
+                                name="longitude"
+                                value="{{ old('longitude') }}"
+                                required
+                                inputmode="decimal"
+                                placeholder="109.xxxxxx">
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary w-100 mb-3" type="button" id="useCurrentLocation">
+                        <i class="bi bi-crosshair me-2">
+                        </i>Gunakan Lokasi Saat Ini</button>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label" for="loc_radius">Radius (meter)
+                            </label>
+                            <input
+                                class="form-control"
+                                id="loc_radius"
+                                type="number"
+                                name="radius_meters"
+                                value="{{ old('radius_meters', 100) }}"
+                                min="10"
+                                max="5000"
+                                required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="loc_acc">Batas Akurasi GPS (meter)
+                            </label>
+                            <input
+                                class="form-control"
+                                id="loc_acc"
+                                type="number"
+                                name="max_accuracy_meters"
+                                value="{{ old('max_accuracy_meters', 100) }}"
+                                min="10"
+                                max="1000"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="loc_enforce"
+                            name="enforce_radius"
+                            value="1"
+                            checked>
+                        <label class="form-check-label" for="loc_enforce">Tegakkan batas radius <strong>absen masuk</strong> (tolak absen di luar area)
+                        </label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="loc_enforce_out"
+                            name="enforce_checkout_radius"
+                            value="1">
+                        <label class="form-check-label" for="loc_enforce_out">Tegakkan batas radius <strong>absen pulang</strong> (matikan jika karyawan boleh pulang dari lapangan)
+                        </label>
+                    </div>
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="bi bi-save me-2">
+                        </i>Simpan &amp; Aktifkan Lokasi</button>
                     <div class="form-text mt-2">Lokasi baru otomatis menjadi lokasi aktif.</div>
                 </form>
             </div>
@@ -68,24 +238,94 @@
 
 @foreach($locations as $location)
 <div class="modal fade" id="editLocation-{{ $location->id }}" tabindex="-1">
-    <div class="modal-dialog"><form class="modal-content" method="POST" action="{{ route('attendance.locations.update', $location) }}">@csrf @method('PUT')
-        <div class="modal-header"><h5 class="modal-title">Ubah Lokasi — {{ $location->name }}</h5><button class="btn-close" type="button" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Nama Lokasi</label><input class="form-control" name="name" value="{{ $location->name }}" required maxlength="100"></div>
-            <div class="mb-3"><label class="form-label">Alamat</label><input class="form-control" name="address" value="{{ $location->address }}" maxlength="255"></div>
-            <div class="row g-3 mb-3">
-                <div class="col-6"><label class="form-label">Latitude</label><input class="form-control" name="latitude" value="{{ $location->latitude }}" required inputmode="decimal"></div>
-                <div class="col-6"><label class="form-label">Longitude</label><input class="form-control" name="longitude" value="{{ $location->longitude }}" required inputmode="decimal"></div>
-            </div>
-            <div class="row g-3 mb-3">
-                <div class="col-6"><label class="form-label">Radius (meter)</label><input class="form-control" type="number" name="radius_meters" value="{{ $location->radius_meters }}" min="10" max="5000" required></div>
-                <div class="col-6"><label class="form-label">Batas Akurasi (meter)</label><input class="form-control" type="number" name="max_accuracy_meters" value="{{ $location->max_accuracy_meters }}" min="10" max="1000" required></div>
-            </div>
-            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="enforce_radius" value="1" @checked($location->enforce_radius)><label class="form-check-label">Tegakkan batas radius absen masuk</label></div>
-            <div class="form-check form-switch mt-2"><input class="form-check-input" type="checkbox" name="enforce_checkout_radius" value="1" @checked($location->enforce_checkout_radius)><label class="form-check-label">Tegakkan batas radius absen pulang</label></div>
+    <div class="modal-dialog">
+        <form class="modal-content" method="POST" action="{{ route('attendance.locations.update', $location) }}">@csrf @method('PUT')
+        <div class="modal-header">
+            <h5 class="modal-title">Ubah Lokasi — {{ $location->name }}
+            </h5>
+            <button class="btn-close" type="button" data-bs-dismiss="modal">
+            </button>
         </div>
-        <div class="modal-footer"><button class="btn btn-light border" type="button" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" type="submit">Simpan</button></div>
-    </form></div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label class="form-label">Nama Lokasi</label>
+                <input class="form-control" name="name" value="{{ $location->name }}" required maxlength="100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Alamat</label>
+                <input class="form-control" name="address" value="{{ $location->address }}" maxlength="255">
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label class="form-label">Latitude</label>
+                    <input
+                        class="form-control"
+                        name="latitude"
+                        value="{{ $location->latitude }}"
+                        required
+                        inputmode="decimal">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Longitude</label>
+                    <input
+                        class="form-control"
+                        name="longitude"
+                        value="{{ $location->longitude }}"
+                        required
+                        inputmode="decimal">
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label class="form-label">Radius (meter)
+                    </label>
+                    <input
+                        class="form-control"
+                        type="number"
+                        name="radius_meters"
+                        value="{{ $location->radius_meters }}"
+                        min="10"
+                        max="5000"
+                        required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Batas Akurasi (meter)
+                    </label>
+                    <input
+                        class="form-control"
+                        type="number"
+                        name="max_accuracy_meters"
+                        value="{{ $location->max_accuracy_meters }}"
+                        min="10"
+                        max="1000"
+                        required>
+                </div>
+            </div>
+            <div class="form-check form-switch">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="enforce_radius"
+                    value="1"
+                    @checked($location->enforce_radius)>
+                <label class="form-check-label">Tegakkan batas radius absen masuk</label>
+            </div>
+            <div class="form-check form-switch mt-2">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="enforce_checkout_radius"
+                    value="1"
+                    @checked($location->enforce_checkout_radius)>
+                <label class="form-check-label">Tegakkan batas radius absen pulang</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-light border" type="button" data-bs-dismiss="modal">Batal</button>
+            <button class="btn btn-primary" type="submit">Simpan</button>
+        </div>
+    </form>
+    </div>
 </div>
 @endforeach
 @endsection

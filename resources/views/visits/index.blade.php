@@ -4,7 +4,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
             <h1 class="h3 mb-1">Absen Kunjungan</h1>
-            <p class="text-secondary mb-0">Catat kunjungan lapangan dengan judul dan foto. Maksimal {{ $maxPerMonth }} kunjungan per bulan per karyawan.</p>
+            <p class="text-secondary mb-0">Catat kunjungan lapangan dengan judul dan foto. Maksimal {{ $maxPerDay }} kunjungan per hari per karyawan.</p>
         </div>
     </div>
 
@@ -14,17 +14,15 @@
                 <div class="card-body p-4">
                     <h2 class="h6 mb-1">Rekap {{ $monthNav['label'] }}</h2>
                     @unless(auth()->user()->isAdmin())
-                        <div class="d-flex align-items-end gap-2 mb-2">
-                            <span class="fs-2 fw-bold">{{ $myCount }}</span>
-                            <span class="text-secondary mb-2">/ {{ $maxPerMonth }} kunjungan</span>
-                            <span class="badge {{ $remaining > 0 ? 'text-bg-success' : 'text-bg-danger' }} ms-auto mb-2">
-                                Sisa {{ $remaining }}
-                            </span>
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-secondary">Hari ini</span>
+                            <strong>{{ $todayCount }} kunjungan</strong>
                         </div>
-                        <div class="progress mb-3" style="height:10px">
-                            <div class="progress-bar" role="progressbar" style="width: {{ $maxPerMonth ? round($myCount / $maxPerMonth * 100) : 0 }}%" aria-valuenow="{{ $myCount }}" aria-valuemin="0" aria-valuemax="{{ $maxPerMonth }}"></div>
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="text-secondary">Bulan {{ $monthNav['label'] }}</span>
+                            <strong>{{ $monthCount }} kunjungan</strong>
                         </div>
-                        <p class="text-secondary small mb-0">Kuota dihitung per bulan kalender berdasarkan tanggal kunjungan.</p>
+                        <p class="text-secondary small mb-0 mt-2">Batas maksimal {{ $maxPerDay }} kunjungan per hari.</p>
                     @else
                         <p class="text-secondary small mb-3">Ringkasan jumlah kunjungan tiap karyawan pada bulan ini.</p>
                         <div class="table-responsive">
@@ -32,8 +30,8 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Karyawan</th>
-                                        <th class="text-center">Jumlah</th>
-                                        <th class="text-center">Sisa</th>
+                                        <th class="text-center">Hari ini</th>
+                                        <th class="text-center">Bulan ini</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -43,10 +41,8 @@
                                                 <strong>{{ $row['employee']->user?->name ?? '-' }}</strong>
                                                 <small class="d-block text-secondary">{{ $row['employee']->employee_code }}</small>
                                             </td>
-                                            <td class="text-center">{{ $row['count'] }}/{{ $maxPerMonth }}</td>
-                                            <td class="text-center">
-                                                <span class="badge {{ $row['remaining'] > 0 ? 'text-bg-success' : 'text-bg-danger' }}">{{ $row['remaining'] }}</span>
-                                            </td>
+                                            <td class="text-center">{{ $row['today'] }} kunjungan</td>
+                                            <td class="text-center">{{ $row['month'] }} kunjungan</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -65,8 +61,8 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-4">
                         <h2 class="h6 mb-3">Catat kunjungan baru</h2>
-                        @if($remaining <= 0)
-                            <div class="alert alert-warning mb-0">Kuota kunjungan bulan {{ $monthNav['label'] }} sudah penuh ({{ $maxPerMonth }}/{{ $maxPerMonth }}). Anda dapat mencatat lagi bulan depan.</div>
+                        @if($todayCount >= $maxPerDay)
+                            <div class="alert alert-warning mb-0">Batas {{ $maxPerDay }} kunjungan hari ini sudah tercapai. Anda dapat mencatat lagi besok.</div>
                         @else
                             <form method="POST" action="{{ route('visits.store') }}" enctype="multipart/form-data" class="row g-3">
                                 @csrf
@@ -74,6 +70,13 @@
                                     <label class="form-label small" for="visit-title">Judul kunjungan</label>
                                     <input class="form-control @error('title') is-invalid @enderror" id="visit-title" name="title" value="{{ old('title') }}" maxlength="255" placeholder="cth. Kunjungan ke kelompok tani Desa Tarub" required>
                                     @error('title')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small" for="visit-description">Deskripsi <span class="text-secondary">(opsional)</span></label>
+                                    <textarea class="form-control @error('description') is-invalid @enderror" id="visit-description" name="description" rows="2" maxlength="2000" placeholder="cth. Bertemu ketua kelompok tani, membahas bantuan bibit">{{ old('description') }}</textarea>
+                                    @error('description')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -93,8 +96,27 @@
                                     <div class="form-text">JPG/PNG/WebP, maks 2 MB.</div>
                                 </div>
                                 <div class="col-12">
+                                    <label class="form-label small">Lokasi kunjungan (GPS)</label>
+                                    <div class="p-3 rounded-3 bg-light">
+                                        <div class="small" data-role="gps-status">
+                                            <span class="text-secondary">Lokasi belum diambil. Aktifkan GPS lalu tekan tombol di bawah.</span>
+                                        </div>
+                                        <div class="text-secondary small mt-1" data-role="gps-detail"></div>
+                                        <div id="visitMapPreview" class="rounded border mt-2 d-none" style="height:220px;z-index:0"></div>
+                                        <button class="btn btn-sm btn-outline-primary mt-2" type="button" data-role="btn-gps">
+                                            <i class="bi bi-crosshair me-1"></i>Ambil Lokasi Saat Ini
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="latitude" data-role="input-lat" value="{{ old('latitude') }}">
+                                    <input type="hidden" name="longitude" data-role="input-lng" value="{{ old('longitude') }}">
+                                    <input type="hidden" name="accuracy" data-role="input-acc" value="{{ old('accuracy') }}">
+                                    @error('latitude')
+                                        <div class="text-danger small mt-1">Lokasi GPS wajib diambil sebelum menyimpan.</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12">
                                     <button class="btn btn-primary" type="submit">
-                                        <i class="bi bi-geo-alt me-2"></i>Simpan kunjungan (sisa {{ $remaining }})
+                                        <i class="bi bi-geo-alt me-2"></i>Simpan kunjungan
                                     </button>
                                 </div>
                             </form>
@@ -170,6 +192,22 @@
         @endif
     </div>
 
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h2 class="h6 mb-0"><i class="bi bi-map me-2 text-primary"></i>Peta Sebaran{{ auth()->user()->isAdmin() ? ' (semua karyawan)' : ' (kunjungan saya)' }}</h2>
+        </div>
+        <div class="card-body">
+            @if($mapPoints->isNotEmpty())
+                <div id="visitsMap" style="height:380px;border-radius:.9rem;z-index:0"></div>
+                <p class="text-secondary small mb-0 mt-2">Menampilkan {{ $mapPoints->count() }} titik kunjungan berkoordinat pada filter bulan ini. Klik pin untuk detail.</p>
+            @elseif(auth()->user()->isAdmin() && empty($filters['employee_id']))
+                <div class="alert alert-info mb-0">Lokasi kunjungan bersifat per karyawan — pilih satu karyawan pada filter untuk melihat peta sebarannya.</div>
+            @else
+                <div class="alert alert-secondary mb-0">Belum ada titik lokasi pada filter ini.</div>
+            @endif
+        </div>
+    </div>
+
     <div class="card border-0 shadow-sm">
         <div class="table-responsive">
             <table class="table align-middle mb-0">
@@ -181,6 +219,7 @@
                         <th>Judul kunjungan</th>
                         <th>Tanggal</th>
                         <th>Foto</th>
+                        <th>Lokasi</th>
                         <th class="text-end">Aksi</th>
                     </tr>
                 </thead>
@@ -193,15 +232,29 @@
                                     <small class="d-block text-secondary">{{ $visit->employee?->employee_code }}</small>
                                 </td>
                             @endif
-                            <td>{{ $visit->title }}</td>
+                            <td>
+                                <strong>{{ $visit->title }}</strong>
+                                @if($visit->description)
+                                    <small class="d-block text-secondary">{{ \Illuminate\Support\Str::limit($visit->description, 80) }}</small>
+                                @endif
+                            </td>
                             <td>{{ $visit->visit_date->translatedFormat('d M Y') }}</td>
                             <td>
                                 <a href="{{ asset('storage/' . $visit->photo) }}" target="_blank" title="Lihat foto">
                                     <img src="{{ asset('storage/' . $visit->photo) }}" width="48" height="48" class="rounded border" style="object-fit:cover" alt="Foto kunjungan">
                                 </a>
                             </td>
+                            <td>
+                                @if($showLocation && $visit->latitude && $visit->longitude)
+                                    <a class="text-decoration-none small" href="{{ route('visits.show', $visit) }}" title="Lihat di peta">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ number_format($visit->latitude, 5) }}, {{ number_format($visit->longitude, 5) }}
+                                    </a>
+                                @else
+                                    <span class="text-secondary small">-</span>
+                                @endif
+                            </td>
                             <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-secondary" href="{{ asset('storage/' . $visit->photo) }}" target="_blank" title="Lihat foto penuh">
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('visits.show', $visit) }}" title="Detail + peta">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <form class="d-inline" method="POST" action="{{ route('visits.destroy', $visit) }}" data-confirm="Hapus data kunjungan ini? Foto ikut terhapus permanen.">
@@ -215,7 +268,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ auth()->user()->isAdmin() ? 5 : 4 }}" class="text-center text-secondary py-5">
+                            <td colspan="{{ auth()->user()->isAdmin() ? 6 : 5 }}" class="text-center text-secondary py-5">
                                 <i class="bi bi-geo-alt d-block fs-2 mb-2"></i>Belum ada data kunjungan pada bulan ini.
                             </td>
                         </tr>
@@ -226,3 +279,82 @@
         <div class="p-3">{{ $visits->links() }}</div>
     </div>
 @endsection
+
+@push('scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@if($mapPoints->isNotEmpty())
+<script>
+(function () {
+    const points = @json($mapPoints);
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const map = L.map('visitsMap').setView([points[0].lat, points[0].lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+    const bounds = [];
+    points.forEach((p) => {
+        L.marker([p.lat, p.lng]).addTo(map)
+            .bindPopup('<strong>' + esc(p.title) + '</strong><br><small>' + esc(p.employee) + ' · ' + esc(p.date) + '</small><br><a href="' + esc(p.url) + '">Lihat detail</a>');
+        bounds.push([p.lat, p.lng]);
+    });
+    if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40] });
+})();
+</script>
+@endif
+@unless(auth()->user()->isAdmin())
+<script>
+(function () {
+    const form = document.querySelector('form[action="{{ route('visits.store') }}"]');
+    if (!form) return;
+    const statusEl = form.querySelector('[data-role="gps-status"]');
+    const detailEl = form.querySelector('[data-role="gps-detail"]');
+    const latInput = form.querySelector('[data-role="input-lat"]');
+    const lngInput = form.querySelector('[data-role="input-lng"]');
+    const accInput = form.querySelector('[data-role="input-acc"]');
+    const btn = form.querySelector('[data-role="btn-gps"]');
+    const mapBox = document.getElementById('visitMapPreview');
+    let map = null, marker = null;
+
+    function showPreview(lat, lng) {
+        mapBox.classList.remove('d-none');
+        if (!map) {
+            map = L.map('visitMapPreview').setView([lat, lng], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+        } else {
+            map.setView([lat, lng], 16);
+        }
+        if (marker) marker.remove();
+        marker = L.marker([lat, lng]).addTo(map).bindPopup('Lokasi kunjungan').openPopup();
+        setTimeout(() => map.invalidateSize(), 200);
+    }
+
+    function fetchLocation(onDone) {
+        if (!navigator.geolocation) {
+            statusEl.innerHTML = '<span class="text-danger">Perangkat tidak mendukung GPS.</span>';
+            return;
+        }
+        statusEl.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><span class="text-secondary">Mengambil lokasi...</span>';
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude, lng = pos.coords.longitude, acc = pos.coords.accuracy;
+                latInput.value = lat; lngInput.value = lng; accInput.value = Math.round(acc);
+                statusEl.innerHTML = '<span class="badge text-bg-success"><i class="bi bi-geo-alt me-1"></i>Lokasi terkunci</span>';
+                detailEl.textContent = Number(lat).toFixed(6) + ', ' + Number(lng).toFixed(6) + ' (±' + Math.round(acc) + ' m)';
+                showPreview(lat, lng);
+                if (onDone) onDone();
+            },
+            () => { statusEl.innerHTML = '<span class="text-danger">Gagal mengambil lokasi. Pastikan izin lokasi diaktifkan lalu coba lagi.</span>'; },
+            { enableHighAccuracy: true, timeout: 15000 }
+        );
+    }
+
+    btn.addEventListener('click', () => fetchLocation());
+    form.addEventListener('submit', (e) => {
+        if (!latInput.value || !lngInput.value) {
+            e.preventDefault();
+            fetchLocation(() => form.submit());
+        }
+    });
+})();
+</script>
+@endunless
+@endpush

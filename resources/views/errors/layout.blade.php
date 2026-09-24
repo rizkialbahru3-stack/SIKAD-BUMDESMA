@@ -33,8 +33,12 @@
             <h1 class="h3 fw-bold mt-2 mb-2">{{ $page['title'] }}</h1>
             <p class="text-secondary mb-4">{{ $page['text'] }}</p>
             <div class="d-flex flex-wrap justify-content-center gap-2">
-                <a class="btn btn-primary" href="{{ url('/') }}"><i class="bi bi-house me-2"></i>Kembali ke Beranda</a>
-                <a class="btn btn-outline-secondary" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-2"></i>Halaman Login</a>
+                <a class="btn btn-primary" href="{{ url('/') }}">
+                    <i class="bi bi-house me-2">
+                    </i>Kembali ke Beranda</a>
+                <a class="btn btn-outline-secondary" href="{{ route('login') }}">
+                    <i class="bi bi-box-arrow-in-right me-2">
+                    </i>Halaman Login</a>
             </div>
             <p class="text-secondary small mt-4 mb-0">BUMDESMA LKD TARUB — Sistem Informasi Karyawan</p>
         </div>

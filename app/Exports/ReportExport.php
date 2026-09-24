@@ -2,20 +2,17 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromArray;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class ReportExport implements FromArray, WithHeadings
+class ReportExport implements WithMultipleSheets
 {
-    public function __construct(private array $rows, private array $headingRows) {}
+    /**
+     * @param  ReportSheet[]  $sheets
+     */
+    public function __construct(private array $sheets) {}
 
-    public function array(): array
+    public function sheets(): array
     {
-        return $this->rows;
-    }
-
-    public function headings(): array
-    {
-        return $this->headingRows;
+        return $this->sheets;
     }
 }

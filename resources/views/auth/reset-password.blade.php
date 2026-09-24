@@ -18,7 +18,10 @@
 	<main class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
 		<div class="auth-card bg-white p-4 p-md-5 w-100" style="max-width: 480px;">
 			<div class="text-center mb-4">
-				<span class="auth-icon mb-3"><i class="bi bi-key"></i></span>
+				<span class="auth-icon mb-3">
+				    <i class="bi bi-key">
+				    </i>
+				</span>
 				<h1 class="h4 fw-bold mb-1">Buat password baru</h1>
 				<p class="text-secondary small mb-0">Password minimal 8 karakter.</p>
 			</div>
@@ -27,19 +30,42 @@
 				<input type="hidden" name="token" value="{{ $token }}">
 				<div class="mb-3">
 					<label class="form-label fw-semibold small" for="email">Email</label>
-					<input class="form-control form-control-lg @error('email') is-invalid @enderror" id="email" name="email" type="email" value="{{ old('email', request('email')) }}" required autofocus>
+					<input
+					    class="form-control form-control-lg @error('email') is-invalid @enderror"
+					    id="email"
+					    name="email"
+					    type="email"
+					    value="{{ old('email', request('email')) }}"
+					    required
+					    autofocus>
 					@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
 				</div>
 				<div class="mb-3">
 					<label class="form-label fw-semibold small" for="password">Password Baru</label>
-					<input class="form-control form-control-lg @error('password') is-invalid @enderror" id="password" name="password" type="password" minlength="8" autocomplete="new-password" required>
+					<input
+					    class="form-control form-control-lg @error('password') is-invalid @enderror"
+					    id="password"
+					    name="password"
+					    type="password"
+					    minlength="8"
+					    autocomplete="new-password"
+					    required>
 					@error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
 				</div>
 				<div class="mb-4">
 					<label class="form-label fw-semibold small" for="password_confirmation">Konfirmasi Password Baru</label>
-					<input class="form-control form-control-lg" id="password_confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required>
+					<input
+					    class="form-control form-control-lg"
+					    id="password_confirmation"
+					    name="password_confirmation"
+					    type="password"
+					    minlength="8"
+					    autocomplete="new-password"
+					    required>
 				</div>
-				<button class="btn btn-primary btn-lg w-100" type="submit"><i class="bi bi-check-circle me-2"></i>Simpan Password Baru</button>
+				<button class="btn btn-primary btn-lg w-100" type="submit">
+				    <i class="bi bi-check-circle me-2">
+				    </i>Simpan Password Baru</button>
 			</form>
 		</div>
 	</main>

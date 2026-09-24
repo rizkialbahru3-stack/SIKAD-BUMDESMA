@@ -38,7 +38,13 @@
 	</style>
 </head>
 <body>
-	<a class="back-home" href="{{ route('home') }}" title="Kembali ke halaman utama website"><span class="back-ic"><i class="bi bi-arrow-left"></i></span><span class="txt">Kembali ke Beranda</span></a>
+	<a class="back-home" href="{{ route('home') }}" title="Kembali ke halaman utama website">
+	    <span class="back-ic">
+	        <i class="bi bi-arrow-left">
+	        </i>
+	    </span>
+	    <span class="txt">Kembali ke Beranda</span>
+	</a>
 	<main class="container d-flex align-items-center justify-content-center login-wrap py-4 py-md-5">
 		<div class="login-card bg-white w-100" style="max-width: 920px;">
 			<div class="row g-0">
@@ -55,11 +61,25 @@
 							<p class="small mb-4 opacity-75">Kelola kehadiran, cuti, penggajian, dan apresiasi dalam satu pintu.</p>
 						</div>
 						<div class="d-grid gap-2">
-							<div class="feature-pill"><i class="bi bi-calendar-check"></i><span>Absensi masuk &amp; pulang tercatat otomatis</span></div>
-							<div class="feature-pill"><i class="bi bi-calendar2-heart"></i><span>Pengajuan cuti &amp; izin lebih mudah</span></div>
-							<div class="feature-pill"><i class="bi bi-wallet2"></i><span>Slip gaji &amp; reward transparan</span></div>
+							<div class="feature-pill">
+							    <i class="bi bi-calendar-check">
+							    </i>
+							    <span>Absensi masuk &amp; pulang tercatat otomatis</span>
+							</div>
+							<div class="feature-pill">
+							    <i class="bi bi-calendar2-heart">
+							    </i>
+							    <span>Pengajuan cuti &amp; izin lebih mudah</span>
+							</div>
+							<div class="feature-pill">
+							    <i class="bi bi-wallet2">
+							    </i>
+							    <span>Slip gaji &amp; reward transparan</span>
+							</div>
 						</div>
-						<p class="small mt-4 mb-0 opacity-50 d-none d-lg-block"><i class="bi bi-shield-lock me-1"></i>Data Anda terlindungi &amp; hanya untuk internal.</p>
+						<p class="small mt-4 mb-0 opacity-50 d-none d-lg-block">
+						    <i class="bi bi-shield-lock me-1">
+						    </i>Data Anda terlindungi &amp; hanya untuk internal.</p>
 					</div>
 				</div>
 				<div class="col-lg-7 p-4 p-md-5">
@@ -71,26 +91,58 @@
 							<div class="mb-3">
 								<label class="form-label fw-semibold small" for="email">Email</label>
 								<div class="input-group input-group-lg">
-									<span class="input-group-text"><i class="bi bi-envelope"></i></span>
-									<input class="form-control" id="email" name="email" type="email" placeholder="nama@bumdesma.test" value="{{ old('email') }}" required autofocus>
+									<span class="input-group-text">
+									    <i class="bi bi-envelope">
+									    </i>
+									</span>
+									<input
+									    class="form-control"
+									    id="email"
+									    name="email"
+									    type="email"
+									    placeholder="nama@bumdesma.test"
+									    value="{{ old('email') }}"
+									    required
+									    autofocus>
 								</div>
 							</div>
 							<div class="mb-2">
 								<label class="form-label fw-semibold small" for="password">Password</label>
 								<div class="input-group input-group-lg">
-									<span class="input-group-text"><i class="bi bi-key"></i></span>
+									<span class="input-group-text">
+									    <i class="bi bi-key">
+									    </i>
+									</span>
 									<input class="form-control" id="password" name="password" type="password" placeholder="••••••••" required>
-									<button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Tampilkan/sembunyikan password"><i class="bi bi-eye"></i></button>
+									<button
+									    class="btn btn-outline-secondary"
+									    type="button"
+									    id="togglePassword"
+									    title="Tampilkan/sembunyikan password">
+									<i class="bi bi-eye">
+									</i>
+									</button>
 								</div>
 							</div>
 							<div class="d-flex justify-content-between align-items-center mb-4">
-								<div class="form-check"><input class="form-check-input" id="remember" name="remember" type="checkbox"><label class="form-check-label small" for="remember">Ingat saya</label></div>
+								<div class="form-check">
+								    <input class="form-check-input" id="remember" name="remember" type="checkbox">
+								    <label class="form-check-label small" for="remember">Ingat saya</label>
+								</div>
 								<a class="small text-decoration-none" href="{{ route('password.request') }}">Lupa password?</a>
 							</div>
 							@if($errors->any())
-								<div class="alert alert-danger d-flex align-items-center gap-2 py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill"></i><span>{{ $errors->first() }}</span></div>
+								<div class="alert alert-danger d-flex align-items-center gap-2 py-2 small" role="alert">
+								    <i class="bi bi-exclamation-triangle-fill">
+								    </i>
+								    <span>
+								        {{ $errors->first() }}
+								    </span>
+								</div>
 							@endif
-							<button class="btn btn-primary btn-lg w-100 btn-login" type="submit"><i class="bi bi-box-arrow-in-right me-2"></i>Masuk ke sistem</button>
+							<button class="btn btn-primary btn-lg w-100 btn-login" type="submit">
+							    <i class="bi bi-box-arrow-in-right me-2">
+							    </i>Masuk ke sistem</button>
 						</form>
 						<div class="divider my-4">akses internal karyawan</div>
 						<p class="text-center text-secondary small mb-0">Butuh bantuan akun? Hubungi administrator BUMDESMA.</p>

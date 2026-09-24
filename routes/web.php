@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/recognition', [RecognitionController::class, 'index'])->name('recognition.index');
     Route::get('/visits', [VisitAttendanceController::class, 'index'])->name('visits.index');
     Route::post('/visits', [VisitAttendanceController::class, 'store'])->name('visits.store');
+    Route::get('/visits/{visit}', [VisitAttendanceController::class, 'show'])->whereNumber('visit')->name('visits.show');
     Route::delete('/visits/{visit}', [VisitAttendanceController::class, 'destroy'])->name('visits.destroy');
     Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
@@ -81,7 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil-saya', function () {
         return redirect()->route('profile');
     });
-    Route::middleware('admin')->prefix('reports')->name('reports.')->group(function () {
+    Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
         Route::get('/attendance', [ReportController::class, 'attendance'])->name('attendance');
         Route::get('/leaves', [ReportController::class, 'leave'])->name('leaves');
